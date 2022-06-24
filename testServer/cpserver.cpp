@@ -8,6 +8,7 @@ CPServer::CPServer(QWidget *parent)
     , ui(new Ui::MainWindow)
     , F_CP(MAX_F_CPNUM + 1)
     , T_CP(MAX_T_CPNUM + 1)
+    , report(MAX_F_CPNUM + MAX_T_CPNUM +1)
 {
     db = new DB();
     FCallNum = 1;
@@ -45,6 +46,15 @@ void CPServer::updateTimeDeal()
 {
     if (systime->msec() % 5 == 0)   //5分钟考虑一次更新
     {
+        //1、 先考虑充电桩的状态，以及详单和报表的更新
+        emit signal_startpower();
+
+
+        //2、再考虑 等候区的状态
+
+        //3、再考虑叫号和调度进入充电区问题
+
+        //4、再考虑进入等候区的处理问题
         QVector<int> q;
         //先看一下可不可以叫号
         int calledNum;  //被叫的号

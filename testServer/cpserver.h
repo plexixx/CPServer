@@ -32,6 +32,7 @@ private:
     User* curmanager;        //当前的管理员，本程序中只实现一个管理员
     QVector<ChargePile> F_CP;    //快充电桩
     QVector<ChargePile> T_CP;    //慢充电桩
+    QVector<Report> report;      //每个充电桩有一个报表
     WaitArea* waitarea;
     User* curUser;
 
