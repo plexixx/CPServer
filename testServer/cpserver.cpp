@@ -10,12 +10,14 @@ CPServer::CPServer(QWidget *parent)
     , T_CP(MAX_T_CPNUM + 1)
 {
     db = new DB();
+    CanCallNum = 1;
 
     //系统时间更新
     systimer = new SysTimer();
     timer = new QTimer; //创建定时器
     //连接槽函数，将timer的timeout行为，连接到updateTime函数中
-    connect(timer, SIGNAL(timeout()), systimer, SLOT(updateTime()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateTime()));
+
     timer->start(MS_PER_MIN);
 
 
@@ -32,6 +34,16 @@ CPServer::CPServer(QWidget *parent)
     curUser = new User();
 
 
+
+}
+
+void CPServer::updateTimeDeal()
+{
+    //先看一下可不可以叫号
+    if (CanCallNum == 1)
+    {
+
+    }
 }
 
 CPServer::~CPServer()
