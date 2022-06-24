@@ -91,7 +91,7 @@ void TcpServer::Socket_Data_Processing(QString SendData,int descriptor)
                 if(requestType == "cqueue")
                 {
                     answerType = "QueueResult";
-                    num = getQueueNum();
+                    num = getQueueNum(descriptor);
                 }
                 else
                 {
