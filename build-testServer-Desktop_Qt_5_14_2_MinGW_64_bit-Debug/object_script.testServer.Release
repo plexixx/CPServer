@@ -1,0 +1,16 @@
+release/bill.o
+release/chargepile.o
+release/cpserver.o
+release/db.o
+release/main.o
+release/report.o
+release/systimer.o
+release/tcpserver.o
+release/tcpsocket.o
+release/connectsql.o
+release/user.o
+release/waitarea.o
+release/moc_cpserver.o
+release/moc_systimer.o
+release/moc_tcpserver.o
+release/moc_waitarea.o

@@ -1,0 +1,16 @@
+debug/bill.o
+debug/chargepile.o
+debug/cpserver.o
+debug/db.o
+debug/main.o
+debug/report.o
+debug/systimer.o
+debug/tcpserver.o
+debug/tcpsocket.o
+debug/connectsql.o
+debug/user.o
+debug/waitarea.o
+debug/moc_cpserver.o
+debug/moc_systimer.o
+debug/moc_tcpserver.o
+debug/moc_waitarea.o

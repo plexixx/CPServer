@@ -10,8 +10,7 @@ WaitArea::WaitArea()
 
 int WaitArea::CusArrive(int cusId, int askType)
 {
-    if (CurParkNum >= MAX_PARK_NUM)
-        return 0;
+
 
     if (askType == F_MODE)
     {

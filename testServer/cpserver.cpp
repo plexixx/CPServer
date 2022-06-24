@@ -19,6 +19,8 @@ CPServer::CPServer(QWidget *parent)
     timer->start(MS_PER_MIN);
 
 
+
+
     tcp_server = new QTcpServer;
     tcp_server->listen(QHostAddress::LocalHost, 6666);
     qDebug()<<("start listen to port 6666 of local host!") << endl;
@@ -49,9 +51,14 @@ void CPServer::EventCome(char ch, int userId, int mode, float degree)
             {
                 qDebug()<< "当前等候区车位已满，用户无法进入充电桩" << endl;
             }
-            curUser->WaitNum = waitarea->CusArrive(userId, mode);
+
+            //更改用户状态
+            curUser->WaitNum = waitarea->CusArrive(userId, mode);   //修改排队号
+            curUser->mode = mode;
+            curUser-> ChargeCapacity = degree;
             break;
         case 'B':
+            waitarea->StartPriority = 1;
             break;
         case 'C':
             break;

@@ -35,7 +35,7 @@ public:
     int it_time;
 
     bool CallFlag;          //为1表示开启叫号服务
-
+    bool StartPriority;     //为1表示充电桩故障时使用优先级调度
 
     WaitArea();
     //顾客来到等候区，将顾客加入队列，并返回排队号码
