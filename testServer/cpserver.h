@@ -9,6 +9,7 @@
 #include <QSet>
 #include "systimer.h"
 #include <QTimer>
+#include <QTime>
 #include "chargepile.h"
 #include "db.h"
 #include <MacroDefine.h>
@@ -33,6 +34,8 @@ private:
     QVector<ChargePile> T_CP;    //慢充电桩
     WaitArea* waitarea;
     User* curUser;
+
+    QTime* systime; // 系统时间
 
     bool FCallNum;
     bool TCallNum;
@@ -64,7 +67,7 @@ public:
     QByteArray getSheet(QString, int seq);  // 获取详单信息
     QByteArray getAllSheet(QString); // 获取全部详单及其主要信息
     int getQueueNum(QString); // 获取排队号
-    int getPreCarNum(QString, int); // 获取前车等待数
+    int getPreCarNum(QString); // 获取前车等待数
     bool CusChangAsk();
 
     Ui::MainWindow *ui;
@@ -77,11 +80,7 @@ public:
 
 
 public slots:
-    void onNewConnection();  // 收到新连接
-    void onSocketStateChange(QAbstractSocket::SocketState socketstate);  // socket状态改变
-    void onClientConnected();  // 和客户端建立连接
-    void onClientDisconnected();   // 和客户端断开连接
-    void onSocketReadyRead();  // socket可读
     void updateTimeDeal();
+    void addSecs();
 };
 #endif // CPSERVER_H

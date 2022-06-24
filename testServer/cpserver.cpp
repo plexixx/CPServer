@@ -16,6 +16,9 @@ CPServer::CPServer(QWidget *parent)
     //系统时间更新
     systimer = new SysTimer();
     timer = new QTimer; //创建定时器
+    systime = new QTime(6, 0); // 6:00:00
+
+    connect(timer, SIGNAL(timeout()), this, SLOT(addSecs()));
     //连接槽函数，将timer的timeout行为，连接到updateTime函数中
     connect(timer, SIGNAL(timeout()), this, SLOT(updateTimeDeal()));
 
@@ -40,13 +43,18 @@ CPServer::CPServer(QWidget *parent)
 
 void CPServer::updateTimeDeal()
 {
+    QVector<int> q;
     //先看一下可不可以叫号
     int calledNum;  //被叫的号
     int CPid;   //调度确定的充电桩
     if (FCallNum == 1)
     {
         if (waitarea->StartPriority == 1)
+<<<<<<< HEAD
             calledNum = waitarea->PriorityCallNum(F_MODE);
+=======
+            waitarea->PriorityCallNum(F_MODE, q);
+>>>>>>> cc03a5e608e501fd3b67fe3d4d73e9b33e82eaac
         else
             calledNum = waitarea->CallNum(F_MODE);
         CPid = sysSchedule(F_MODE);    //叫号后面就是调度
@@ -55,7 +63,11 @@ void CPServer::updateTimeDeal()
     if (TCallNum == 1)
     {
         if (waitarea->StartPriority == 1)
+<<<<<<< HEAD
             calledNum = waitarea->PriorityCallNum(T_MODE);
+=======
+            waitarea->PriorityCallNum(T_MODE, q);
+>>>>>>> cc03a5e608e501fd3b67fe3d4d73e9b33e82eaac
         else
             calledNum = waitarea->CallNum(T_MODE);
         CPid = sysSchedule(T_MODE);
@@ -98,153 +110,10 @@ void CPServer::EventCome(char ch, int userId, int mode, float degree)
 }
 
 
-
-void CPServer::onSocketReadyRead()
-{
-    if(tcp_socket->canReadLine())
-    {
-        QByteArray type = tcp_socket->readLine();
-        type = type.trimmed();
-        QString requestType = type;
-        QString name, pswd;
-        QString answer, answerType;
-        bool res;
-
-        QByteArray answerType_str, ans_str;
-
-        qDebug()<<("request: " + requestType) << endl;
-
-        if(requestType == "clogin" || requestType == "creg")
-        {
-            name = tcp_socket->readLine();
-            name = name.trimmed();
-            pswd = tcp_socket->readLine();
-            pswd = pswd.trimmed();
-
-            if (requestType == "clogin")
-                res = getLoginResult(name, pswd);
-            else
-                res = getRegResult(name, pswd);
-
-            if (requestType == "clogin")
-            {
-                answerType = "LoginResult";
-                if(res)
-                {
-                    answer = "LoginSuccess";
-//                    curUsr.name = name;
-//                    curUsr.pswd = pswd;
-                }
-                else
-                    answer = "LoginFailure";
-            }
-            else
-            {
-                answerType = "RegResult";
-                if(res)
-                    answer = "RegSuccess";
-                else
-                    answer = "RegFailure";
-            }
-
-            answerType_str = answerType.toUtf8();
-            ans_str = answer.toUtf8();
-            answerType_str.append('\n');
-            ans_str.append('\n');
-        }
-        else if (requestType == "cnum" || requestType == "cqueue")
-        {
-            int num;
-            bool chargeType;
-            if(requestType == "cqueue")
-            {
-                answerType = "QueueResult";
-//                num = getQueueNum(curUsr.name);
-            }
-            else
-            {
-                answerType = "NumResult";
-                pswd = tcp_socket->readLine();
-                pswd = pswd.trimmed();
-                QVariant onLineTemp = pswd;
-                chargeType = onLineTemp.toBool();
-//                num = getPreCarNum(curUsr.name, chargeType);
-            }
-            answer = QString::number(num, 10);
-            answerType_str = answerType.toUtf8();
-            ans_str = answer.toUtf8();
-            answerType_str.append('\n');
-            ans_str.append('\n');
-        }
-        else if (requestType == "csheet")
-        {
-            answerType = "SheetResult";
-            pswd = tcp_socket->readLine();
-            pswd = pswd.trimmed();
-            int seq = pswd.toInt();
-
-            answerType_str = answerType.toUtf8();
-//            ans_str = getSheet(curUsr.name, seq);
-            answerType_str.append('\n');
-        }
-        else if(requestType == "csheetlist")
-        {
-            answerType = "SheetListResult";
-            answerType_str = answerType.toUtf8();
-//            ans_str = getAllSheet(curUsr.name);
-            answerType_str.append('\n');
-        }
-        else if (requestType == "ccommit")
-        {
-            answerType = "CommitResult";
-            pswd = tcp_socket->readLine();
-            pswd = pswd.trimmed();
-            QVariant onLineTemp = pswd;
-            bool chargeType = onLineTemp.toBool();  //充电类型
-            pswd = tcp_socket->readLine();
-            pswd = pswd.trimmed();
-            float chargeQuantity = pswd.toDouble();    //充电量
-            // TODO: 转存or使用收到的充电类型和充电量
-
-
-            answer = "CommitSuccess";
-            answerType_str = answerType.toUtf8();
-            ans_str = answer.toUtf8();
-            answerType_str.append('\n');
-            ans_str.append('\n');
-        }
-        tcp_socket->write(answerType_str);
-        tcp_socket->write(ans_str);
-    }
-}
-
-void CPServer::onNewConnection() //不用改
-{
-    tcp_socket = tcp_server->nextPendingConnection();
-    connect(tcp_socket, SIGNAL(connected()), this, SLOT(onClientConnected()));
-    onClientConnected();
-    connect(tcp_socket, SIGNAL(disconnected()), this, SLOT(onClientDisconnected()));
-    connect(tcp_socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(onSocketStateChange(QAbstractSocket::SocketState)));
-    connect(tcp_socket, SIGNAL(readyRead()), this, SLOT(onSocketReadyRead()));
-
-}
-
-void CPServer::onClientConnected() //不用改
-{
-//    ui->serverEdit->appendPlainText("connected to client \n");
-}
-void CPServer::onClientDisconnected() // 不用改
-{
-//    ui->serverEdit->appendPlainText("disconnected to client \n");
-    tcp_socket->deleteLater();
-}
-void CPServer::onSocketStateChange(QAbstractSocket::SocketState socketstate)
+void CPServer::addSecs()
 {
     // 空着就行
-}
-void CPServer::closeEvent(QCloseEvent* event)
-{
-    // 空着就行
+    systime->addSecs(60); //过去1分钟
 }
 
 bool CPServer::getLoginResult(QString name, QString pswd)
@@ -283,7 +152,7 @@ int CPServer::getQueueNum(QString name)
     return waitarea->CusArrive(user->id, user->mode);
 }
 
-int CPServer::getPreCarNum(QString name, int)
+int CPServer::getPreCarNum(QString name)
 {
     // 服务器拿收到的用户名去取对应的前车等待数并返回这个数
     User* user = db->loadUser(name);
@@ -397,7 +266,7 @@ bool CPServer::TurnOffCP(int CPid, bool mode)
 
 bool CPServer::NewCusArrive(int chargeType, int chargeQuantity)
 {
-    if (waitarea->CurParkNum+1 > MAX_PARK_NUM)    //停车区已满
+    if (waitarea->CurParkNum >= MAX_PARK_NUM)    //停车区已满
     {
         qDebug() << "等候区车位已满"<<endl;
         return false;   //申请失败

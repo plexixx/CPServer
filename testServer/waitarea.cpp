@@ -63,11 +63,15 @@ void WaitArea::StartPriorityCallNum(bool mode, QVector<int> q)
     }
 
 }
-int WaitArea::PriorityCallNum(bool mode)
+int WaitArea::PriorityCallNum(bool mode, QVector<int> q)
 {
     if(mode)
     {
-
+        if(E_FQueue.size() == 0)
+                {
+                    E_FQueue = q;
+                    it_EF = 0;
+                }
         //如果故障队列都调度完毕，则开启普通调度
         if(it_EF >= E_FQueue.size())
         {
@@ -80,6 +84,11 @@ int WaitArea::PriorityCallNum(bool mode)
     }
     else
     {
+        if(E_TQueue.size() == 0)
+               {
+                   E_TQueue = q;
+                   it_ET = 0;
+               }
         //如果故障队列都调度完毕，则开启普通调度
         if(it_ET >= E_TQueue.size())
         {
