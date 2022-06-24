@@ -16,7 +16,7 @@ CPServer::CPServer(QWidget *parent)
     //系统时间更新
     systimer = new SysTimer();
     timer = new QTimer; //创建定时器
-    systime = new QTime(6, 0); // 6:00:00
+    systime = new QTime(5,55); // 6:00:00，启动后进入到5点55，之后每5分钟刷新一次
 
     connect(timer, SIGNAL(timeout()), this, SLOT(addSecs()));
     //连接槽函数，将timer的timeout行为，连接到updateTime函数中
@@ -43,31 +43,35 @@ CPServer::CPServer(QWidget *parent)
 
 void CPServer::updateTimeDeal()
 {
-    QVector<int> q;
-    //先看一下可不可以叫号
-    int calledNum;  //被叫的号
-    int CPid;   //调度确定的充电桩
-    if (FCallNum == 1)
+    if (systime->msec() % 5 == 0)   //5分钟考虑一次更新
     {
-        if (waitarea->StartPriority == 1)
+        QVector<int> q;
+        //先看一下可不可以叫号
+        int calledNum;  //被叫的号
+        int CPid;   //调度确定的充电桩
+        if (FCallNum == 1)
         {
-            calledNum = waitarea->PriorityCallNum(F_MODE);
+            if (waitarea->StartPriority == 1)
+            {
+                calledNum = waitarea->PriorityCallNum(F_MODE);
+            }
+
+            else
+                calledNum = waitarea->CallNum(F_MODE);
+            CPid = sysSchedule(F_MODE);    //叫号后面就是调度
+            GotoChargArea(F_MODE, CPid, callnumToId[calledNum]);
         }
+        if (TCallNum == 1)
+        {
+            if (waitarea->StartPriority == 1)
+                calledNum = waitarea->PriorityCallNum(T_MODE);
 
-        else
-            calledNum = waitarea->CallNum(F_MODE);
-        CPid = sysSchedule(F_MODE);    //叫号后面就是调度
-        GotoChargArea(F_MODE, CPid, callnumToId[calledNum]);
+            else
+                calledNum = waitarea->CallNum(T_MODE);
+            CPid = sysSchedule(T_MODE);
+        }
     }
-    if (TCallNum == 1)
-    {
-        if (waitarea->StartPriority == 1)
-            calledNum = waitarea->PriorityCallNum(T_MODE);
 
-        else
-            calledNum = waitarea->CallNum(T_MODE);
-        CPid = sysSchedule(T_MODE);
-    }
 
 }
 
@@ -109,7 +113,7 @@ void CPServer::EventCome(char ch, int userId, int mode, float degree)
 void CPServer::addSecs()
 {
     // 空着就行
-    systime->addSecs(60); //过去1分钟
+    systime->addSecs(60*5); //每过去五分钟，进行状态的刷新
 }
 
 bool CPServer::getLoginResult(QString name, QString pswd)
@@ -393,7 +397,14 @@ int CPServer::prioritySchedule(int errID, bool mode)
 {
     waitarea->CallFlag = false;
     if(mode)
-        return waitarea->PriorityCallNum(mode, F_CP[errID].queue);
+    {
+        waitarea->StartPriorityCallNum(mode, F_CP[errID].queue);
+        return waitarea->PriorityCallNum(mode);
+    }
+
     else
-        return waitarea->PriorityCallNum(mode, T_CP[errID].queue);
+    {
+        waitarea->StartPriorityCallNum(mode, T_CP[errID].queue);
+        return waitarea->PriorityCallNum(mode);
+    }
 }

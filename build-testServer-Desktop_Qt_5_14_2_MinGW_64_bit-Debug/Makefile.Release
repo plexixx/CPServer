@@ -292,6 +292,8 @@ release/moc_cpserver.cpp: ../testServer/cpserver.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QTimer \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/qtimer.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QTime \
+		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/qdatetime.h \
 		../testServer/chargepile.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QVector \
 		../testServer/db.h \
@@ -593,12 +595,12 @@ release/moc_tcpserver.cpp: ../testServer/tcpserver.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtNetwork/qtcpsocket.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QtAlgorithms \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QSet \
+		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QTime \
+		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/qdatetime.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QDebug \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QFile \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QList \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QMap \
-		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QTime \
-		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/qdatetime.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/bin/moc.exe
 	C:\Qt\Qt5.14.2\5.14.2\mingw73_64\bin\moc.exe $(DEFINES) --include C:/Users/zISqueen/Desktop/qt/myyServer/CPServer/build-testServer-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/release/moc_predefs.h -IC:/Qt/Qt5.14.2/5.14.2/mingw73_64/mkspecs/win32-g++ -IC:/Users/zISqueen/Desktop/qt/myyServer/CPServer/testServer -IC:/Qt/Qt5.14.2/5.14.2/mingw73_64/include -IC:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtWidgets -IC:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtGui -IC:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtANGLE -IC:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtNetwork -IC:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtSql -IC:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore -I. -IC:/Qt/Qt5.14.2/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++ -IC:/Qt/Qt5.14.2/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32 -IC:/Qt/Qt5.14.2/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward -IC:/Qt/Qt5.14.2/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include -IC:/Qt/Qt5.14.2/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed -IC:/Qt/Qt5.14.2/Tools/mingw730_64/x86_64-w64-mingw32/include ..\testServer\tcpserver.h -o release\moc_tcpserver.cpp
@@ -1116,6 +1118,8 @@ release/cpserver.o: ../testServer/cpserver.cpp ../testServer/cpserver.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QTimer \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/qtimer.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QTime \
+		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/qdatetime.h \
 		../testServer/chargepile.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QVector \
 		../testServer/db.h \
@@ -1415,6 +1419,8 @@ release/main.o: ../testServer/main.cpp ../testServer/cpserver.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QTimer \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/qtimer.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QTime \
+		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/qdatetime.h \
 		../testServer/chargepile.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QVector \
 		../testServer/db.h \
@@ -1441,8 +1447,6 @@ release/main.o: ../testServer/main.cpp ../testServer/cpserver.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QFile \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QList \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QMap \
-		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QTime \
-		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/qdatetime.h \
 		../testServer/tcpserver.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\main.o ..\testServer\main.cpp
 
@@ -1838,12 +1842,12 @@ release/tcpserver.o: ../testServer/tcpserver.cpp ../testServer/tcpserver.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtNetwork/qtcpsocket.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QtAlgorithms \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QSet \
+		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QTime \
+		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/qdatetime.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QDebug \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QFile \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QList \
-		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QMap \
-		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QTime \
-		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/qdatetime.h
+		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QMap
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\tcpserver.o ..\testServer\tcpserver.cpp
 
 release/tcpsocket.o: ../testServer/tcpsocket.cpp ../testServer/tcpserver.h \
@@ -2006,12 +2010,12 @@ release/tcpsocket.o: ../testServer/tcpsocket.cpp ../testServer/tcpserver.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtNetwork/qtcpsocket.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QtAlgorithms \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QSet \
+		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QTime \
+		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/qdatetime.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QDebug \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QFile \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QList \
-		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QMap \
-		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QTime \
-		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/qdatetime.h
+		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QMap
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\tcpsocket.o ..\testServer\tcpsocket.cpp
 
 release/connectsql.o: ../testServer/connectsql.cpp ../testServer/connectsql.h \
@@ -2174,12 +2178,12 @@ release/connectsql.o: ../testServer/connectsql.cpp ../testServer/connectsql.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtNetwork/qtcpsocket.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QtAlgorithms \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QSet \
+		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QTime \
+		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/qdatetime.h \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QDebug \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QFile \
 		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QList \
-		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QMap \
-		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QTime \
-		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/qdatetime.h
+		C:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore/QMap
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\connectsql.o ..\testServer\connectsql.cpp
 
 release/user.o: ../testServer/user.cpp ../testServer/user.h \

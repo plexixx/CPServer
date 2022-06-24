@@ -18,7 +18,7 @@
 #define MAX_T_CPNUM 3   //最大慢充电桩数目
 
 #define MS_PER_MIN  1000  //1秒就是一分钟
-#define CPUPDATEPEIROD 1    //1min
+#define CPUPDATEPEIROD 5    //1min
 
 //充电模式
 #define F_MODE 1    //快充

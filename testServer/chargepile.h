@@ -10,7 +10,7 @@
 #include <QWidget>
 #include<QTimer>
 //充电桩
-class ChargePile : public QObject/*: public QWidget*/
+class ChargePile /*: public QObject*//*: public QWidget*/
 {
     //Q_OBJECT
 public:
@@ -54,9 +54,7 @@ public:
         return state;
     }
 
-signals:
-    void signal_startpower();   //开始充电信号
-    void signal_endpower();     //结束充电信号
+
 };
 
 #endif // CHARGEPILE_H
