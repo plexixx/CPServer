@@ -38,6 +38,27 @@ CPServer::~CPServer()
     timer->stop();
 }
 
+//处理事件
+void CPServer::EventCome(char ch, int userId, int mode, float degree)
+{
+    User* curUser;
+    switch (ch) {
+        case 'A':
+            curUser = userList[userId];
+            if (waitarea->CurParkNum >= MAX_PARK_NUM)
+            {
+                qDebug()<< "当前等候区车位已满，用户无法进入充电桩" << endl;
+            }
+            curUser->WaitNum = waitarea->CusArrive(userId, mode);
+            break;
+        case 'B':
+            break;
+        case 'C':
+            break;
+        default:
+            break;
+    }
+}
 
 
 
