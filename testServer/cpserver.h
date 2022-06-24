@@ -5,6 +5,7 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QApplication>
+#include <QtAlgorithms>
 #include <QSet>
 #include "systimer.h"
 #include <QTimer>

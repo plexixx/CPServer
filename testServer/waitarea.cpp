@@ -125,7 +125,13 @@ int WaitArea::TimeOrderCallNum(bool mode, QVector<int> q)
         MergedQueue = q;
         it_time = 0;
     }
-
+    if(it_time >= MergedQueue.size())
+    {
+        MergedQueue.clear();
+        CallFlag = true;
+        return CallNum(mode);
+    }
+    return MergedQueue[it_time++];
 }
 
 

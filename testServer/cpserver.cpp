@@ -415,6 +415,7 @@ int CPServer::timeSchedule(int errID, bool mode)
 {
     waitarea->CallFlag = false;
     QVector<int> q;
+    QMap<int, int> map;
 
     if(mode)
     {
@@ -423,7 +424,8 @@ int CPServer::timeSchedule(int errID, bool mode)
         {
             for(int j = 1; j < F_CP[i].queue.size(); j++)
             {
-                q.push_back(F_CP[i].queue[j]);
+                int uid = F_CP[i].queue[j];
+                map.insert(userList[uid]->WaitNum, uid);
             }
             F_CP[i].queue.clear();
         }
@@ -435,15 +437,17 @@ int CPServer::timeSchedule(int errID, bool mode)
         {
             for(int j = 1; j < T_CP[i].queue.size(); j++)
             {
-                q.push_back(T_CP[i].queue[j]);
+                int uid = T_CP[i].queue[j];
+                map.insert(userList[uid]->WaitNum, uid);
             }
             T_CP[i].queue.clear();
         }
     }
 
-
-
-    qsort(q, q.size(), sizeof(int), compare);
+    for(auto it = map.begin(); it != map.end(); it++)
+    {
+        q.push_back(it.value());
+    }
 
     return waitarea->TimeOrderCallNum(mode, q);
 }
