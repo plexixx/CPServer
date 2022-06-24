@@ -353,33 +353,64 @@ bool CPServer::NewCusArrive(int chargeType, int chargeQuantity)
 // 调度
 
 // 系统调度
-int CPServer::sysSchedule()
+int CPServer::sysSchedule(bool mode)
 {
-    //以下为系统调度的内容
     int selectCP = 0;   //选中的充电桩
     int minTime = 0x7fffffff;   //当前的最短等待时间
     QVector<ChargePile> CP;  //所有的充电桩
-    for (int i=0; i<CP.size(); i++)
+    if(mode) // 快充
     {
-        if (CP[i].queue.size() >= MAX_CHARGE_QUEUE_LEN)
-            continue;   //说明排队队列已满
-        int tmpWaitTime = 0;    //在充电桩i时的完成充电所需时长
-        QVector<int> iQueue = CP[i].queue;
-        //遍历整个排队队列，求出等待时长
-        for (int j=0; j<iQueue.size(); j++)
+        for(int i = 0; i < MAX_F_CPNUM; i++)
         {
-            tmpWaitTime += aCustomer[iQueue[j]].NeedChargeTime;
-        }
-        if (minTime > tmpWaitTime)
-        {
-            minTime = tmpWaitTime;
-            selectCP = CP[i].ChargeId;
+            if(F_CP[i].queue.size() >= MAX_CHARGE_QUEUE_LEN)
+                continue; //排队队列已满
+            int tmpWaitTime = 0;    //在充电桩i时的完成充电所需时长
+            QVector<int> iQueue = F_CP[i].queue;
+            //遍历整个排队队列，求出等待时长
+            for (int j=0; j<iQueue.size(); j++)
+            {
+                tmpWaitTime += aCustomer[iQueue[j]].NeedChargeTime;
+            }
+            if (minTime > tmpWaitTime)
+            {
+                minTime = tmpWaitTime;
+                selectCP = F_CP[i].ChargeId;
+            }
         }
     }
+    else    // 慢充
+    {
+        for(int i = 0; i < MAX_T_CPNUM; i++)
+        {
+            if(F_CP[i].queue.size() >= MAX_CHARGE_QUEUE_LEN)
+                continue; //排队队列已满
+            int tmpWaitTime = 0;    //在充电桩i时的完成充电所需时长
+            QVector<int> iQueue = T_CP[i].queue;
+            //遍历整个排队队列，求出等待时长
+            for (int j=0; j<iQueue.size(); j++)
+            {
+                tmpWaitTime += aCustomer[iQueue[j]].NeedChargeTime;
+            }
+            if (minTime > tmpWaitTime)
+            {
+                minTime = tmpWaitTime;
+                selectCP = T_CP[i].ChargeId;
+            }
+        }
+    }
+    return selectCP;
 }
 
 
-// 时间调度
+// 时间顺序调度
+int CPServer::timeSchedule()
+{
+
+}
+
 
 // 优先级调度
+int CPServer::prioritySchedule()
+{
 
+}

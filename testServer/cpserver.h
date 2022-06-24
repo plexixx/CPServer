@@ -37,9 +37,9 @@ private:
 
 public:
 
-    int sysSchedule();  //系统调度
-    int timeSchedule(); //时间顺序调度
-    int prioritySchedule(); //优先级调度
+    int sysSchedule(bool mode);  //系统调度
+    int timeSchedule(bool mode); //时间顺序调度
+    int prioritySchedule(bool mode); //优先级调度
 
 
     bool TurnOnCP(int CPid, bool mode);     //打开编号为id的充电桩

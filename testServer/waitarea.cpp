@@ -80,6 +80,7 @@ int WaitArea::TimeOrderCallNum(int askType)
     return CusQueue[it_time++].id;
 }
 
+
 void WaitArea::M_CallNum(int Fnum, int Tnum, QVector<int>&Fcus, QVector<int>&Tcus)
 {
     int dst = it_F+Fnum;

@@ -9,18 +9,11 @@
 #include <algorithm>
 #include <QWidget>
 #include <chargepile.h>
-#include <customer.h>
-
-//有空位的充电桩
-class FreeCP {
-    int CPId;   //充电桩id
-    int FreeNum;    //剩余队列数目
-};
-
+#include <user.h>
 
 
 //等候区
-class WaitArea : public QWidget
+class WaitArea
 {
     Q_OBJECT
 public:
@@ -30,12 +23,13 @@ public:
     int it_F;   //指向快充队列当前处理完成的位置，指向的确定位置是还没有处理的
     QVector<int>TQueue; //慢充模式的排队队列
     int it_T;   //指向慢充队列当前处理完成的位置
+
     QVector<int>E_FQueue; //故障的快充排队队列
     int it_EF;  //指向故障快充队列当前处理完成的位置
     QVector<int>E_TQueue; //故障的慢充排队队列
     int it_ET; //指向故障满充队列当前处理完成的位置
-    QVector<FreeCP> freeCP;  //空闲充电桩
-    QVector<Customer> CusQueue; //时间顺序调度的一个新的队列
+
+    QVector<User*> MergedQueue; //时间顺序调度的一个新的队列
     int it_time;
 
 //    bool CallFlag;          //为1表示开启叫号服务
