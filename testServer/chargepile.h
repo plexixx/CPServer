@@ -30,7 +30,7 @@ public:
 
     int state;      //充电桩状态
 
-    QTimer timer;   //当充电时就开启计时
+    //QTimer timer;   //当充电时就开启计时
     int SurplusPowtime; //剩余充电时长
 
 

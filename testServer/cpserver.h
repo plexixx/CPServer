@@ -7,7 +7,7 @@
 #include <QApplication>
 #include <QtAlgorithms>
 #include <QSet>
-#include "systimer.h"
+//#include "systimer.h"
 #include <QTimer>
 #include <QTime>
 #include "chargepile.h"
@@ -27,7 +27,7 @@ class CPServer : public QObject
 {
     Q_OBJECT
 private:
-    SysTimer* systimer;         //系统时间
+    //SysTimer* systimer;         //系统时间
     QTimer * timer;             //计时器，用于系统时间的更新
     User* curmanager;        //当前的管理员，本程序中只实现一个管理员
     QVector<ChargePile> F_CP;    //快充电桩

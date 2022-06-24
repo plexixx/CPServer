@@ -5,16 +5,28 @@ Bill::Bill()
 
 }
 
-void Bill::createBill(int chargeID, SysTimer *const beginPowerTime)
+QString Bill::timeToString(int hour, int min)
 {
-    this->ChargeId = chargeID;
-    this->BeginPowerTime = *beginPowerTime;
-    CreateTime = *beginPowerTime;
+    return  QString::number(hour, 10) + ":" + QString::number(min, 10);
 }
 
-void Bill::finishBill(SysTimer *createTime, SysTimer *endPowerTime)
+void Bill::createBill(int chargeID,int hour, int min)
 {
-    EndPowerTime = *endPowerTime;
+    this->ChargeId = chargeID;
+    this->beginHour = hour;
+    this->beginMin = min;
+
+
+}
+
+void Bill::finishBill(int hour, int min)
+{
+
+    this->createHour = hour;
+    this->createMin = min;
+
+    this->endHour = hour;
+    this->endMin = min;
 }
 
 void Bill::updateBill(int hour)

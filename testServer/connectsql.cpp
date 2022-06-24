@@ -13,11 +13,11 @@ QString toString(SysTimer mySysTimer){
 }
 
 //将QString转换成SysTimer
-SysTimer stringTo(QString str){
-    SysTimer tmp;
-    tmp.Stringto(str);
-    return tmp;
-}
+//SysTimer stringTo(QString str){
+//    SysTimer tmp;
+//    tmp.Stringto(str);
+//    return tmp;
+//}
 
 
 void loadData(){

@@ -11,6 +11,5 @@ debug/connectsql.o
 debug/user.o
 debug/waitarea.o
 debug/moc_cpserver.o
-debug/moc_systimer.o
 debug/moc_tcpserver.o
 debug/moc_waitarea.o

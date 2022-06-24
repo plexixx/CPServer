@@ -57,12 +57,14 @@ void DB::storeBill(Bill *sp)
     query.prepare("insert into bill(id,CreateTime,ChargeId,ChargeCabacity,ChargeTime,"
                   "BeginPowerTime,EndPowerTime,ChargeFare,ServeFare,TotalFare)");
     query.bindValue(0,sp->id);
-    query.bindValue(1,sp->CreateTime.toString());
+    query.bindValue(1,sp->timeToString(sp->createHour, sp->createMin));
     query.bindValue(2,sp->ChargeId);
     query.bindValue(3,sp->ChargeCapacity);
     query.bindValue(4,sp->ChargeTime);
-    query.bindValue(5,sp->BeginPowerTime.toString());
-    query.bindValue(6,sp->EndPowerTime.toString());
+//    query.bindValue(5,sp->BeginPowerTime.toString());
+//    query.bindValue(6,sp->EndPowerTime.toString());
+    query.bindValue(1,sp->timeToString(sp->beginHour, sp->beginMin));
+    query.bindValue(1,sp->timeToString(sp->endHour, sp->endMin));
     query.bindValue(7,sp->ChargeFare);
     query.bindValue(8,sp->ServeFare);
     query.bindValue(9,sp->TotalFare);

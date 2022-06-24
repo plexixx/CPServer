@@ -26,11 +26,11 @@ void Report::UpdateReport(int DayTotalNum, int DayTotalTime, float DayTotalPower
 }
 
 
-void Report::NewDayUpdateReport(SysTimer systimer)
+void Report::NewDayUpdateReport(int mon, int week, int day)
 {
-    mon = systimer.mon;
-    week = systimer.week;
-    day = systimer.day;
+    mon = mon;
+    week = week;
+    day = day;
     TotalChargeNum = 0;
     TotalChargeTime = 0;
     TotalChargeCapacity = 0;

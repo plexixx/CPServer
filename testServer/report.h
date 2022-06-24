@@ -1,7 +1,7 @@
 ﻿#ifndef REPORT_H
 #define REPORT_H
 
-#include <systimer.h>
+//#include <systimer.h>
 
 //报表
 class Report
@@ -25,7 +25,7 @@ public:
     void UpdateReport(int DayTotalNum, int DayTotalTime,
                 float DayTotalPower, float ChargeFare,
                 float ServeFare);
-    void NewDayUpdateReport(SysTimer systimer);    //新的一天到来，报表需要更新
+    void NewDayUpdateReport(int mon, int week, int day);    //新的一天到来，报表需要更新
 
 };
 

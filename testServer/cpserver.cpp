@@ -15,7 +15,7 @@ CPServer::CPServer(QWidget *parent)
     TCallNum = 1;
 
     //系统时间更新
-    systimer = new SysTimer();
+    //systimer = new SysTimer();
     timer = new QTimer; //创建定时器
     systime = new QTime(5,55); // 6:00:00，启动后进入到5点55，之后每5分钟刷新一次
 
@@ -50,6 +50,7 @@ void CPServer::updateTimeDeal()
         emit signal_startpower();
 
 
+        emit signal_endpower();
         //2、再考虑 等候区的状态
 
         //3、再考虑叫号和调度进入充电区问题

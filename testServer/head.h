@@ -43,7 +43,7 @@ extern DB DB;
 extern CPServer server;
 
 // manager
-extern SysTimer mySysTimer;
+//extern SysTimer mySysTimer;
 extern QVector<ChargePile> myChargePile;
 extern QVector<Bill> myBill;
 extern QVector<User> myUser;

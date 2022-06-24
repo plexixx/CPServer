@@ -48,7 +48,6 @@ HEADERS += \
     cpserver.h \
     db.h \
     report.h \
-    systimer.h \
     tcpserver.h \
     head.h \
     connectsql.h \
