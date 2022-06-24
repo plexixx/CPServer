@@ -118,11 +118,14 @@ void WaitArea::startTimeSegCall(int errID, QVector<ChargePile>& q)
 }
 
 
-int WaitArea::TimeOrderCallNum(int askType)
+int WaitArea::TimeOrderCallNum(bool mode, QVector<int> q)
 {
-    if (it_time == CusQueue.size())   //所有的故障队列和未充电队列处理完毕
-        return CallNum(askType);
-    return CusQueue[it_time++].id;
+    if(MergedQueue.size() == 0)
+    {
+        MergedQueue = q;
+        it_time = 0;
+    }
+
 }
 
 

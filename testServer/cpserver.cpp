@@ -6,6 +6,8 @@
 CPServer::CPServer(QWidget *parent)
     : QObject(parent)
     , ui(new Ui::MainWindow)
+    , F_CP(MAX_F_CPNUM + 1)
+    , T_CP(MAX_T_CPNUM + 1)
 {
     db = new DB();
 
@@ -194,7 +196,7 @@ bool CPServer::getLoginResult(QString name, QString pswd)
     if(user == nullptr)
         return false;
     curUser = user;
-    userList.insert(name, user);
+    userList.insert(user->id, user);
     return true;
 }
 
@@ -217,18 +219,18 @@ bool CPServer::getRegResult(QString name, QString pswd)
 int CPServer::getQueueNum(QString name)
 {
     // 服务器拿收到的用户名去取对应的排队号并返回这个数
-    if(userList.count(name) == 0)
+    User* user = db->loadUser(name);
+    if(userList.count(user->id) == 0)
         return 0;
-    User* user = userList[name];
     return waitarea->CusArrive(user->id, user->mode);
 }
 
 int CPServer::getPreCarNum(QString name, int)
 {
     // 服务器拿收到的用户名去取对应的前车等待数并返回这个数
-    if(userList.count(name) == 0)
+    User* user = db->loadUser(name);
+    if(userList.count(user->id) == 0)
         return 0;
-    User* user = userList[name];
     return user->mode ? user->WaitNum - waitarea->it_F
                       : user->WaitNum - waitarea->it_T;
 }
@@ -402,14 +404,21 @@ int CPServer::sysSchedule(bool mode)
 }
 
 
+int compare(const void *a, const void *b)
+{
+    return (*(int*)a - *(int*)b);
+}
+
+
 // 时间顺序调度
 int CPServer::timeSchedule(int errID, bool mode)
 {
     waitarea->CallFlag = false;
+    QVector<int> q;
+
     if(mode)
     {
         // 将其它同类型充电桩中尚未充电的车辆与故障候队列中车辆合为一组
-        QVector<int> q;
         for(int i = 0; i < MAX_F_CPNUM; i++)
         {
             for(int j = 1; j < F_CP[i].queue.size(); j++)
@@ -418,11 +427,10 @@ int CPServer::timeSchedule(int errID, bool mode)
             }
             F_CP[i].queue.clear();
         }
-        waitarea->TimeOrderCallNum(errID, q);
+        waitarea->TimeOrderCallNum(mode, q);
     }
     else
     {
-        QVector<int> q;
         for(int i = 0; i < MAX_T_CPNUM; i++)
         {
             for(int j = 1; j < T_CP[i].queue.size(); j++)
@@ -431,8 +439,13 @@ int CPServer::timeSchedule(int errID, bool mode)
             }
             T_CP[i].queue.clear();
         }
-        waitarea->TimeOrderCallNum(errID, q);
     }
+
+
+
+    qsort(q, q.size(), sizeof(int), compare);
+
+    return waitarea->TimeOrderCallNum(mode, q);
 }
 
 
@@ -441,7 +454,7 @@ int CPServer::prioritySchedule(int errID, bool mode)
 {
     waitarea->CallFlag = false;
     if(mode)
-        waitarea->PriorityCallNum(mode, F_CP[errID].queue);
+        return waitarea->PriorityCallNum(mode, F_CP[errID].queue);
     else
-        waitarea->PriorityCallNum(mode, T_CP[errID].queue);
+        return waitarea->PriorityCallNum(mode, T_CP[errID].queue);
 }

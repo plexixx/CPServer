@@ -7,7 +7,6 @@
 #include <QApplication>
 #include <QSet>
 #include "systimer.h"
-#include "manager.h"
 #include <QTimer>
 #include "chargepile.h"
 #include "db.h"
@@ -28,7 +27,7 @@ class CPServer : public QObject
 private:
     SysTimer* systimer;         //系统时间
     QTimer * timer;             //计时器，用于系统时间的更新
-    manager* curmanager;        //当前的管理员，本程序中只实现一个管理员
+    User* curmanager;        //当前的管理员，本程序中只实现一个管理员
     QVector<ChargePile> F_CP;    //快充电桩
     QVector<ChargePile> T_CP;    //慢充电桩
     WaitArea* waitarea;
@@ -46,11 +45,11 @@ public:
     bool TurnOffCP(int CPid, bool mode);    //关闭编号为id的充电桩
     bool NewCusArrive(int chargeType, int chargeQuantity);  //新用户要进入等候区
 
-    CPServer(QWidget *parent = nullptr) : F_CP(MAX_F_CPNUM + 1), T_CP(MAX_T_CPNUM + 1) {};
+    CPServer(QWidget *parent = nullptr);
     ~CPServer();
 
     DB* db;                                 //数据库
-    QMap<QString, User*> userList;          //已登录用户表
+    QMap<int, User*> userList;              //已登录用户表
 
     bool getLoginResult(QString, QString);  // 获取登录状态
     bool getRegResult(QString, QString);  // 获取注册状态
