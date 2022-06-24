@@ -10,13 +10,14 @@ CPServer::CPServer(QWidget *parent)
     , T_CP(MAX_T_CPNUM + 1)
 {
     db = new DB();
-    CanCallNum = 1;
+    FCallNum = 1;
+    TCallNum = 1;
 
     //系统时间更新
     systimer = new SysTimer();
     timer = new QTimer; //创建定时器
     //连接槽函数，将timer的timeout行为，连接到updateTime函数中
-    connect(timer, SIGNAL(timeout()), this, SLOT(updateTime()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateTimeDeal()));
 
     timer->start(MS_PER_MIN);
 
@@ -40,10 +41,23 @@ CPServer::CPServer(QWidget *parent)
 void CPServer::updateTimeDeal()
 {
     //先看一下可不可以叫号
-    if (CanCallNum == 1)
+    if (FCallNum == 1)
     {
-
+        if (waitarea->StartPriority == 1)
+            waitarea->PriorityCallNum(F_MODE);
+        else
+            waitarea->CallNum(F_MODE);
+        sysSchedule(F_MODE);    //叫号后面就是调度
     }
+    if (TCallNum == 1)
+    {
+        if (waitarea->StartPriority == 1)
+            waitarea->PriorityCallNum(T_MODE);
+        else
+            waitarea->CallNum(T_MODE);
+        sysSchedule(T_MODE);
+    }
+
 }
 
 CPServer::~CPServer()
@@ -399,7 +413,7 @@ int CPServer::sysSchedule(bool mode)
 {
     int selectCP = 0;   //选中的充电桩
     int minTime = 0x7fffffff;   //当前的最短等待时间
-    QVector<ChargePile> CP;  //所有的充电桩
+    //QVector<ChargePile> CP;  //所有的充电桩
     if(mode) // 快充
     {
         for(int i = 0; i < MAX_F_CPNUM; i++)

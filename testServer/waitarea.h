@@ -45,7 +45,8 @@ public:
     //以下为各种叫号方式
     //注意，必须是判断充电桩有空位时才进行叫号
     int CallNum(int askType);     //普通叫号，指的是等候区的叫号，传入请求类型
-    int PriorityCallNum(bool mode, QVector<int> q);   //优先级叫号，输入故障充电桩类型
+    int PriorityCallNum(bool mode);   //优先级叫号，输入故障充电桩类型
+    void StartPriorityCallNum(bool mode, QVector<int> q);   //开启优先级叫号
     //时间顺序叫号,传入充电类型，故障充电桩与同类型的打开的充电桩
     int TimeOrderCallNum(bool mode, QVector<int> q);
     //开启时间顺序叫号，当故障恢复时同样进行这个处理

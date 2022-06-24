@@ -34,7 +34,8 @@ private:
     WaitArea* waitarea;
     User* curUser;
 
-    bool CanCallNum;
+    bool FCallNum;
+    bool TCallNum;
 
 
 public:
@@ -77,6 +78,6 @@ public slots:
     void onClientConnected();  // 和客户端建立连接
     void onClientDisconnected();   // 和客户端断开连接
     void onSocketReadyRead();  // socket可读
-    void updateTime();
+    void updateTimeDeal();
 };
 #endif // CPSERVER_H
