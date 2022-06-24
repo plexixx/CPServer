@@ -41,21 +41,24 @@ CPServer::CPServer(QWidget *parent)
 void CPServer::updateTimeDeal()
 {
     //先看一下可不可以叫号
+    int calledNum;  //被叫的号
+    int CPid;   //调度确定的充电桩
     if (FCallNum == 1)
     {
         if (waitarea->StartPriority == 1)
-            waitarea->PriorityCallNum(F_MODE);
+            calledNum = waitarea->PriorityCallNum(F_MODE);
         else
-            waitarea->CallNum(F_MODE);
-        sysSchedule(F_MODE);    //叫号后面就是调度
+            calledNum = waitarea->CallNum(F_MODE);
+        CPid = sysSchedule(F_MODE);    //叫号后面就是调度
+        GotoChargArea(F_MODE, CPid, callnumToId[calledNum]);
     }
     if (TCallNum == 1)
     {
         if (waitarea->StartPriority == 1)
-            waitarea->PriorityCallNum(T_MODE);
+            calledNum = waitarea->PriorityCallNum(T_MODE);
         else
-            waitarea->CallNum(T_MODE);
-        sysSchedule(T_MODE);
+            calledNum = waitarea->CallNum(T_MODE);
+        CPid = sysSchedule(T_MODE);
     }
 
 }
@@ -80,6 +83,7 @@ void CPServer::EventCome(char ch, int userId, int mode, float degree)
 
             //更改用户状态
             curUser->WaitNum = waitarea->CusArrive(userId, mode);   //修改排队号
+            callnumToId[curUser->WaitNum] = curUser->id;
             curUser->mode = mode;
             curUser-> ChargeCapacity = degree;
             break;
@@ -403,6 +407,18 @@ bool CPServer::NewCusArrive(int chargeType, int chargeQuantity)
     curUser->WaitNum = waitarea->CusArrive
             (curUser->id, chargeType);  //等候区去进行处理，生成排队号码
     return true;
+}
+
+void CPServer::GotoChargArea(bool mode, int CPid, int userId)
+{
+    if (mode == F_MODE)
+    {
+        F_CP[CPid].queue.push_back(userId);
+    }
+    else
+    {
+        T_CP[CPid].queue.push_back(userId);
+    }
 }
 
 

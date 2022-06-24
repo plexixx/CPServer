@@ -38,6 +38,7 @@ private:
     bool TCallNum;
 
 
+
 public:
     //处理事件
     void EventCome(char ch, int userId, int mode, float degree);
@@ -56,6 +57,7 @@ public:
 
     DB* db;                                 //数据库
     QMap<int, User*> userList;              //已登录用户表
+    QMap<int, int> callnumToId;              //排队号码到用户id的映射
 
     bool getLoginResult(QString, QString);  // 获取登录状态
     bool getRegResult(QString, QString);  // 获取注册状态
@@ -70,6 +72,8 @@ public:
     QTcpServer* tcp_server;  // 服务器
 
     void closeEvent(QCloseEvent* event);  // 关闭连接事件
+
+    void GotoChargArea(bool mode, int CPid, int userId);
 
 
 public slots:
