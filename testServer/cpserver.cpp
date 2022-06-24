@@ -50,11 +50,10 @@ void CPServer::updateTimeDeal()
     if (FCallNum == 1)
     {
         if (waitarea->StartPriority == 1)
-<<<<<<< HEAD
+        {
             calledNum = waitarea->PriorityCallNum(F_MODE);
-=======
-            waitarea->PriorityCallNum(F_MODE, q);
->>>>>>> cc03a5e608e501fd3b67fe3d4d73e9b33e82eaac
+        }
+
         else
             calledNum = waitarea->CallNum(F_MODE);
         CPid = sysSchedule(F_MODE);    //叫号后面就是调度
@@ -63,11 +62,8 @@ void CPServer::updateTimeDeal()
     if (TCallNum == 1)
     {
         if (waitarea->StartPriority == 1)
-<<<<<<< HEAD
             calledNum = waitarea->PriorityCallNum(T_MODE);
-=======
-            waitarea->PriorityCallNum(T_MODE, q);
->>>>>>> cc03a5e608e501fd3b67fe3d4d73e9b33e82eaac
+
         else
             calledNum = waitarea->CallNum(T_MODE);
         CPid = sysSchedule(T_MODE);
