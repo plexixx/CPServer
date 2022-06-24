@@ -403,14 +403,45 @@ int CPServer::sysSchedule(bool mode)
 
 
 // 时间顺序调度
-int CPServer::timeSchedule()
+int CPServer::timeSchedule(int errID, bool mode)
 {
-
+    waitarea->CallFlag = false;
+    if(mode)
+    {
+        // 将其它同类型充电桩中尚未充电的车辆与故障候队列中车辆合为一组
+        QVector<int> q;
+        for(int i = 0; i < MAX_F_CPNUM; i++)
+        {
+            for(int j = 1; j < F_CP[i].queue.size(); j++)
+            {
+                q.push_back(F_CP[i].queue[j]);
+            }
+            F_CP[i].queue.clear();
+        }
+        waitarea->TimeOrderCallNum(errID, q);
+    }
+    else
+    {
+        QVector<int> q;
+        for(int i = 0; i < MAX_T_CPNUM; i++)
+        {
+            for(int j = 1; j < T_CP[i].queue.size(); j++)
+            {
+                q.push_back(T_CP[i].queue[j]);
+            }
+            T_CP[i].queue.clear();
+        }
+        waitarea->TimeOrderCallNum(errID, q);
+    }
 }
 
 
 // 优先级调度
-int CPServer::prioritySchedule()
+int CPServer::prioritySchedule(int errID, bool mode)
 {
-
+    waitarea->CallFlag = false;
+    if(mode)
+        waitarea->PriorityCallNum(mode, F_CP[errID].queue);
+    else
+        waitarea->PriorityCallNum(mode, T_CP[errID].queue);
 }

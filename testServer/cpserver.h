@@ -19,7 +19,7 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-inline QVector<Customer> aCustomer;
+inline QVector<User> aCustomer;
 
 //负责整个系统的运行
 class CPServer : public QObject
@@ -29,8 +29,8 @@ private:
     SysTimer* systimer;         //系统时间
     QTimer * timer;             //计时器，用于系统时间的更新
     manager* curmanager;        //当前的管理员，本程序中只实现一个管理员
-    ChargePile F_CP[MAX_F_CPNUM + 1];    //快充电桩
-    ChargePile T_CP[MAX_T_CPNUM + 1];    //慢充电桩
+    QVector<ChargePile> F_CP;    //快充电桩
+    QVector<ChargePile> T_CP;    //慢充电桩
     WaitArea* waitarea;
     User* curUser;
 
@@ -38,15 +38,15 @@ private:
 public:
 
     int sysSchedule(bool mode);  //系统调度
-    int timeSchedule(bool mode); //时间顺序调度
-    int prioritySchedule(bool mode); //优先级调度
+    int timeSchedule(int errID, bool mode); //时间顺序调度
+    int prioritySchedule(int errID, bool mode); //优先级调度
 
 
     bool TurnOnCP(int CPid, bool mode);     //打开编号为id的充电桩
     bool TurnOffCP(int CPid, bool mode);    //关闭编号为id的充电桩
     bool NewCusArrive(int chargeType, int chargeQuantity);  //新用户要进入等候区
 
-    CPServer(QWidget *parent = nullptr);
+    CPServer(QWidget *parent = nullptr) : F_CP(MAX_F_CPNUM + 1), T_CP(MAX_T_CPNUM + 1) {};
     ~CPServer();
 
     DB* db;                                 //数据库

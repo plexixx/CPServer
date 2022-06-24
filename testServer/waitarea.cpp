@@ -1,14 +1,18 @@
 ﻿#include "waitarea.h"
 
-extern QVector<Customer> aCustomer;
+extern QVector<User> aCustomer;
 
 WaitArea::WaitArea()
 {
     CurParkNum = 0;
+    CallFlag = true;
 }
 
 int WaitArea::CusArrive(int cusId, int askType)
 {
+    if (CurParkNum >= MAX_PARK_NUM)
+        return 0;
+
     if (askType == F_MODE)
     {
         FQueue.push_back(cusId);
@@ -36,40 +40,81 @@ int WaitArea::CallNum(int askType)
     return 0;
 }
 
-int WaitArea::PriorityCallNum(int errType)
+int WaitArea::PriorityCallNum(bool mode, QVector<int> q)
 {
-    if (errType == F_MODE && it_EF < E_FQueue.size())
+    if(mode)
     {
-        int num = E_FQueue[it_EF++];    //取出第一个号
-        return  num;            //返回被叫号的号码
-    }
-    else if (errType == T_MODE && it_ET < E_TQueue.size())
-    {
-        int num = E_TQueue[it_ET++];    //取出第一个号
-        return  num;            //返回被叫号的号码
-    }
-    //如果故障队列都调度完毕，则开启普通调度
-    return CallNum(errType);
-}
-
-void WaitArea::startTimeSegCall(ChargePile errCP, QVector<ChargePile>SameTypeCP)
-{
-    //先将所有需要重新调度的用户加入队列
-    for(int i=0; i<errCP.queue.size(); i++)
-    {
-        CusQueue.push_back(aCustomer[errCP.queue[i]]);
-    }
-    for (int i=0; i<SameTypeCP.size(); i++)
-    {
-        for (int j=1; j<SameTypeCP[i].queue.size(); j++)
+        if(E_FQueue.size() == 0)
         {
-            CusQueue.push_back(aCustomer[SameTypeCP[i].queue[j]]);
+            E_FQueue = q;
+            it_EF = 0;
         }
 
+        //如果故障队列都调度完毕，则开启普通调度
+        if(it_EF >= E_FQueue.size())
+        {
+            CallFlag = true;
+            return CallNum(mode);
+        }
+
+        int num = E_FQueue[it_EF++];    //取出第一个号
+        return num;
     }
-    //按排队号码先后顺序
-    std::sort(CusQueue.begin(), CusQueue.end());
-    it_time = 0;
+    else
+    {
+        if(E_TQueue.size() == 0)
+        {
+            E_TQueue = q;
+            it_ET = 0;
+        }
+
+        //如果故障队列都调度完毕，则开启普通调度
+        if(it_ET >= E_TQueue.size())
+        {
+            CallFlag = true;
+            return CallNum(mode);
+        }
+
+        int num = E_TQueue[it_ET++];    //取出第一个号
+        return num;
+    }
+
+//    if (mode && it_EF < E_FQueue.size()) // 快充
+//    {
+//        int num = E_FQueue[it_EF++];    //取出第一个号
+//        return  num;            //返回被叫号的号码
+//    }
+//    else if (!mode && it_ET < E_TQueue.size())
+//    {
+//        int num = E_TQueue[it_ET++];    //取出第一个号
+//        return  num;            //返回被叫号的号码
+//    }
+//    //如果故障队列都调度完毕，则开启普通调度
+//    return CallNum(errType);
+}
+
+void WaitArea::startTimeSegCall(int errID, QVector<ChargePile>& q)
+{
+    //先将所有需要重新调度的用户加入队列
+    for(int i = 0; i < q.size(); i++)
+    {
+
+    }
+//    for(int i=0; i<errCP.queue.size(); i++)
+//    {
+//        CusQueue.push_back(aCustomer[errCP.queue[i]]);
+//    }
+//    for (int i=0; i<SameTypeCP.size(); i++)
+//    {
+//        for (int j=1; j<SameTypeCP[i].queue.size(); j++)
+//        {
+//            CusQueue.push_back(aCustomer[SameTypeCP[i].queue[j]]);
+//        }
+
+//    }
+//    //按排队号码先后顺序
+//    std::sort(CusQueue.begin(), CusQueue.end());
+//    it_time = 0;
 }
 
 

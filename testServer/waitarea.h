@@ -18,6 +18,8 @@ class WaitArea
     Q_OBJECT
 public:
     int CurParkNum;     //当前车位容量
+
+
     //排队队列所在的下标位置就是排队号
     QVector<int>FQueue; //快充模式的排队队列，只会增多不会减少
     int it_F;   //指向快充队列当前处理完成的位置，指向的确定位置是还没有处理的
@@ -29,10 +31,10 @@ public:
     QVector<int>E_TQueue; //故障的慢充排队队列
     int it_ET; //指向故障满充队列当前处理完成的位置
 
-    QVector<User*> MergedQueue; //时间顺序调度的一个新的队列
+    QVector<int> MergedQueue; //时间顺序调度的一个新的队列
     int it_time;
 
-//    bool CallFlag;          //为1表示开启叫号服务
+    bool CallFlag;          //为1表示开启叫号服务
 
 
     WaitArea();
@@ -43,12 +45,12 @@ public:
     //以下为各种叫号方式
     //注意，必须是判断充电桩有空位时才进行叫号
     int CallNum(int askType);     //普通叫号，指的是等候区的叫号，传入请求类型
-    int PriorityCallNum(int errType);   //优先级叫号，输入故障充电桩类型
+    int PriorityCallNum(bool mode, QVector<int> q);   //优先级叫号，输入故障充电桩类型
     //时间顺序叫号,传入充电类型，故障充电桩与同类型的打开的充电桩
-    int TimeOrderCallNum(int askType);
+    int TimeOrderCallNum(bool mode, QVector<int> q);
     //开启时间顺序叫号，当故障恢复时同样进行这个处理
     //将在充电区没有充电的用户重新放进一个队列
-    void startTimeSegCall(ChargePile errCP, QVector<ChargePile>SameTypeCP);
+    void startTimeSegCall(int errID, QVector<ChargePile>& q);
     //同时叫几个号，输入快充电桩的剩余车位数目和慢充电桩的剩余输入数目
     //把得到的多个号存入传引用里面
     void M_CallNum(int Fnum, int Tnum, QVector<int>&Fcus, QVector<int>&Tcus);
