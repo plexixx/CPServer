@@ -60,14 +60,11 @@ CPServer::CPServer(QWidget *parent)
     waitarea = new WaitArea();  //等候区
     curUser = new User();
 
-    QFile reportFile("../report.txt");  // 报表文件
-    QFile billFile("../bill.txt"); // 详单文件
+    QFile billFile("../bill.csv"); // 详单文件
 
     // 删除旧文件
-    if(reportFile.exists())
-        reportFile.remove();
-    if(billFile.exists())
-        billFile.remove();
+    if (billFile.open(QFile::ReadWrite | QFile::Text))
+        billFile.close();
 }
 
 void CPServer::updateTimeDeal()
@@ -93,6 +90,7 @@ void CPServer::updateTimeDeal()
                      << "累计总费用: " << report[i].TotalFare << endl
                      << "-------------------------" << endl;
         }
+        saveReport();
         qApp->quit();
     }
 
@@ -200,7 +198,7 @@ void CPServer::updateTimeDeal()
             if (CP[i].state == CP_FREE) //由充电状态转为空闲状态，说明充电结束
             {
                  allBill[CPtoBill[i]].finishBill(systime->hour(), systime->minute());
-                 //qDebug() << QString("快充报表更新%1").arg(i) << endl;
+                 saveBill(allBill[CPtoBill[i]]);
                  report[i].UpdateReport(CP[i], allBill[CPtoBill[i]]);   //得到所有的报表
             }
         }
@@ -247,7 +245,7 @@ void CPServer::updateTimeDeal()
             if (CP[i].state == CP_FREE) //由充电状态转为空闲状态，说明充电结束
             {
                  allBill[CPtoBill[i]].finishBill(systime->hour(), systime->minute());
-                 qDebug() << QString("慢充报表更新%1").arg(i) << endl;
+                 saveBill(allBill[CPtoBill[i]]);
                  report[i].UpdateReport(CP[i], allBill[CPtoBill[i]]);   //得到所有的报表
             }
         }
@@ -800,4 +798,81 @@ int CPServer::prioritySchedule(int errID, bool mode)
         waitarea->StartPriorityCallNum(mode, CP[errID].queue);
         return waitarea->PriorityCallNum(mode);
     }
+}
+
+
+void CPServer::saveBill(Bill bill)
+{
+    QFile file("../bill.csv");
+
+    if (file.open(QFile::Append | QFile::Text)) //以只读模式打开文件成功
+    {
+        QTextStream out(&file);
+        //in.setCodec(QTextCodec::codecForName("UTF-8"));
+
+        QString str = QString("%1,%2,%3,%4,%5,%6,%7,%8,%9,%10\n")
+                .arg(bill.uid)
+                .arg(bill.ChargeId)
+                .arg(bill.ChargeCapacity)
+                .arg(bill.beginHour)
+                .arg(bill.beginMin)
+                .arg(bill.endHour)
+                .arg(bill.endMin)
+                .arg(bill.ServeFare)
+                .arg(bill.ChargeFare)
+                .arg(bill.TotalFare);
+
+
+        file.write(qPrintable(str), str.length());
+
+    }
+    else
+    {
+        qDebug() << "File Open Failed";
+    }
+
+    file.close();   //关闭文件
+
+}
+
+void CPServer::saveReport()
+{
+    QFile file("../report.csv");
+
+    if (file.open(QFile::ReadWrite | QFile::Text)) //以只读模式打开文件成功
+    {
+        QTextStream out(&file);
+        //in.setCodec(QTextCodec::codecForName("UTF-8"));
+
+        for(int i = 1; i <= MAX_F_CPNUM + MAX_T_CPNUM; i++)
+        {
+            QString str;
+            if(i <= MAX_F_CPNUM)
+                str = QString("F%1,%2,%3,%4,%5,%6,%7\n")
+                        .arg(i)
+                        .arg(report[i].TotalChargeNum)
+                        .arg(report[i].TotalChargeTime)
+                        .arg(report[i].TotalChargeCapacity)
+                        .arg(report[i].TotalChargeFare)
+                        .arg(report[i].TotalServeFare)
+                        .arg(report[i].TotalFare);
+            else
+                str = QString("T%1,%2,%3,%4,%5,%6,%7\n")
+                        .arg(i - MAX_F_CPNUM)
+                        .arg(report[i].TotalChargeNum)
+                        .arg(report[i].TotalChargeTime)
+                        .arg(report[i].TotalChargeCapacity)
+                        .arg(report[i].TotalChargeFare)
+                        .arg(report[i].TotalServeFare)
+                        .arg(report[i].TotalFare);
+
+            out << str;
+        }
+    }
+    else
+    {
+        qDebug() << "File Open Failed";
+    }
+
+    file.close();   //关闭文件
 }

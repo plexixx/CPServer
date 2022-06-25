@@ -98,7 +98,7 @@ public:
     void getEvent();
 
     void saveReport(); // 保存报表
-    void saveBill(); // 保存详单
+    void saveBill(Bill bill); // 保存详单
 
 
 public slots:
