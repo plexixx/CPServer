@@ -61,6 +61,7 @@ CPServer::CPServer(QWidget *parent)
 void CPServer::updateTimeDeal()
 {
 
+    //输入事件处理
     if (systime->minute() % 5 == 0)
     {
 
@@ -93,7 +94,7 @@ void CPServer::updateTimeDeal()
         qDebug() << "有人在等候区，需叫号" << endl;
         int calledNum;  //被叫的号
         int CPid;   //调度确定的充电桩
-        if (FCallNum == 1)
+        if (FCallNum == 1 && waitarea->FQueue.size() > 0)
         {
             if (waitarea->StartPriority == 1)
             {
@@ -103,15 +104,17 @@ void CPServer::updateTimeDeal()
                 calledNum = waitarea->CallNum(F_MODE);
             CPid = sysSchedule(F_MODE);    //叫号后面就是调度
             GotoChargeArea(F_MODE, CPid, callnumToId[calledNum]);
+            qDebug() << "用户到达块充电桩" << endl;
         }
-        if (TCallNum == 1)
+        if (TCallNum == 1 && waitarea->TQueue.size() > 0)
         {
             if (waitarea->StartPriority == 1)
                 calledNum = waitarea->PriorityCallNum(T_MODE);
-
             else
                 calledNum = waitarea->CallNum(T_MODE);
             CPid = sysSchedule(T_MODE);
+            GotoChargeArea(T_MODE, CPid, callnumToId[calledNum]);
+            qDebug() << "用户到达慢充电桩" << endl;
         }
     }
     else{
@@ -183,7 +186,9 @@ void CPServer::updateTimeDeal()
                 //充电桩队列里有人排队，则可以开始充电
                 //充电桩
                 int topUserId = CP[i].queue[0];
-                CP[i].start(aCustomer[topUserId].CurPower);
+                CP[i].start(allUser[topUserId].CurPower);
+                qDebug() << QString("用户 %1 开始在充电桩 %2 开始充电")
+                         .arg(topUserId).arg(i)<< endl;
                 // 详单
                 Bill bill;
                 bill.createBill(i, systime->hour(), systime->minute(), T_MODE);
@@ -237,9 +242,12 @@ void CPServer::EventCome(QString ch, QString userId, QString mode, float degree)
         //更改用户状态
         qDebug() << QString("处理用户 %1 的到来信息").arg(userId) << endl;
         allUser[uid].WaitNum = waitarea->CusArrive(uid, mode == "F" ? F_MODE : T_MODE);   //修改排队号
+
         qDebug() << "1======cpserver========" << endl;
-        callnumToId[allUser[uid].WaitNum] = allUser[uid].id;
-        qDebug() << "2======cpserver========" << endl;
+        callnumToId[allUser[uid].WaitNum] = uid;
+        qDebug() << QString("用户 %d 对应等待号 %d 检测 %3").arg(uid).arg(allUser[uid].WaitNum)
+                    .arg(callnumToId[allUser[uid].WaitNum])
+                 << endl;
         allUser[uid].mode = mode.toInt();
         qDebug() << "3=======cpserver=======" << endl;
         allUser[uid].ChargeCapacity = degree;
@@ -421,7 +429,7 @@ bool CPServer::getLoginResult(QString name, QString pswd)
     if(user == nullptr)
         return false;
     curUser = user;
-    //userList.insert(user->id, user);
+    userList.insert(user->id, user);
     return true;
 }
 
@@ -705,7 +713,7 @@ int CPServer::timeSchedule(int errID, bool mode)
             for(int j = 1; j < CP[i].queue.size(); j++)
             {
                 int uid = CP[i].queue[j];
-                //map.insert(userList[uid]->WaitNum, uid);
+                map.insert(userList[uid]->WaitNum, uid);
             }
             CP[i].queue.clear();
         }
@@ -718,7 +726,7 @@ int CPServer::timeSchedule(int errID, bool mode)
             for(int j = 1; j < CP[i].queue.size(); j++)
             {
                 int uid = CP[i].queue[j];
-                //map.insert(userList[uid]->WaitNum, uid);
+                map.insert(userList[uid]->WaitNum, uid);
             }
             CP[i].queue.clear();
         }

@@ -69,7 +69,7 @@ public:
     ~CPServer();
 
     DB* db;                                 //数据库
-    //QMap<int, User*> userList;              //已登录用户表
+    QMap<int, User*> userList;              //已登录用户表
     QMap<int, int> callnumToId;              //排队号码到用户id的映射
 
     bool getLoginResult(QString, QString);  // 获取登录状态
