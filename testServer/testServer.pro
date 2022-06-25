@@ -38,6 +38,7 @@ SOURCES += \
     tcpserver.cpp \
     tcpsocket.cpp \
     connectsql.cpp \
+    testqueue.cpp \
     user.cpp \
     waitarea.cpp
 
@@ -51,6 +52,7 @@ HEADERS += \
     tcpserver.h \
     head.h \
     connectsql.h \
+    testqueue.h \
     user.h \
     waitarea.h
 
