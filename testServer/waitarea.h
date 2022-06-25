@@ -11,6 +11,7 @@
 #include <chargepile.h>
 #include <user.h>
 
+extern QVector<User> aCustomer;
 
 //等候区
 class WaitArea

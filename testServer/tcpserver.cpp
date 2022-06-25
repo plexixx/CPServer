@@ -18,6 +18,7 @@ int TcpServer::run()
     {
         qDebug()<<"[TcpServer]-------------------------------------------------listen failer"<<endl;
     }
+    return 1;
 }
 
 void TcpServer::incomingConnection(qintptr socketDescriptor)
@@ -316,4 +317,5 @@ bool TcpServer::getOpenResult(bool type, QString isOpen, int No)
 QString TcpServer::getWaitArea()
 {
     //TODO:返回等候区各车辆的三元组消息，QString形式
+    return "";
 }
