@@ -89,11 +89,11 @@ int WaitArea::PriorityCallNum(bool mode)
 {
     if(mode)
     {
-
         //如果故障队列都调度完毕，则开启普通调度
         if(it_EF >= E_FQueue.size())
         {
-            CallFlag = true;
+            StartPriority = 0;
+            //CallFlag = true;
             return CallNum(mode);
         }
 
@@ -107,7 +107,8 @@ int WaitArea::PriorityCallNum(bool mode)
         //如果故障队列都调度完毕，则开启普通调度
         if(it_ET >= E_TQueue.size())
         {
-            CallFlag = true;
+            StartPriority = 0;
+            //CallFlag = true;
             return CallNum(mode);
         }
 

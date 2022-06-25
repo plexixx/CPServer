@@ -91,19 +91,18 @@ void CPServer::updateTimeDeal()
     //先看一下需不需要叫号
     if (waitarea->CurParkNum > 0)
     {
-        qDebug() << "有人在等候区，需叫号" << endl;
+
         int userId;  //被叫的用户
         int CPid;   //调度确定的充电桩
         if (FCallNum == 1 && waitarea->FQueue.size() > waitarea->it_F)
         {
+            qDebug() << "快充队列有空位，可叫号" << endl;
             if (waitarea->StartPriority == 1)
             {
                 userId = waitarea->PriorityCallNum(F_MODE);
             }
             else
                 userId = waitarea->CallNum(F_MODE);
-
-
 
                 qDebug() << QString("叫完号了===%1======").arg(userId) << endl;
                 CPid = sysSchedule(F_MODE);    //叫号后面就是调度
@@ -299,18 +298,24 @@ void CPServer::EventCome(QString ch, QString userId, QString mode, float degree)
     }
     else if (ch == "B")
     {
+        bool mode = (userId[0] == 'T') ? true : false;
+        userId.remove(0, 1);
+        int errID = mode ? userId.toInt() : userId.toInt() + MAX_F_CPNUM;
+
         if(degree == 0) //故障
         {
             //启动优先级调度
             waitarea->StartPriority = 1;
-            bool mode = (userId[0] == 'T') ? true : false;
-            userId.remove(0, 1);
-            int errID = mode ? userId.toInt() : userId.toInt() + MAX_F_CPNUM;
-            prioritySchedule(errID, mode);
+
+            //prioritySchedule(errID, mode);
+            // 将故障充电桩的用户全部放入故障队列
+            CP[errID].state = CP_ERROR; //标记为故障，之后任何调度都不找它
+            waitarea->StartPriorityCallNum(mode, CP[errID].queue);
         }
         else //恢复
         {
             waitarea->StartPriority = 0;
+            CP[errID].state = CP_FREE;
             /*
              * TODO
              * 若其它同类型充电桩中尚有车辆排队，则暂停等候区叫号服务
@@ -696,6 +701,8 @@ int CPServer::sysSchedule(bool mode)
         {
             if(CP[i].queue.size() >= MAX_CHARGE_QUEUE_LEN)
                 continue; //排队队列已满
+            if (CP[i].state == CP_ERROR)
+                continue;
             int tmpWaitTime = 0;    //在充电桩i时的完成充电所需时长
             QVector<int> iQueue = CP[i].queue;
             //遍历整个排队队列，求出等待时长
@@ -716,6 +723,8 @@ int CPServer::sysSchedule(bool mode)
         {
             if(CP[i].queue.size() >= MAX_CHARGE_QUEUE_LEN)
                 continue; //排队队列已满
+            if (CP[i].state == CP_ERROR)    //充电桩故障
+                continue;
             int tmpWaitTime = 0;    //在充电桩i时的完成充电所需时长
             QVector<int> iQueue = CP[i].queue;
             //遍历整个排队队列，求出等待时长
