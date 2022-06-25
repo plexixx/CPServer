@@ -2,6 +2,7 @@
 QMap <int, QString> UserList;
 User curUsr;
 bool loginState;
+CPServer server;
 
 TcpServer::TcpServer()
 {
