@@ -10,7 +10,7 @@ CPServer::CPServer(QWidget *parent)
     , CP(MAX_F_CPNUM + MAX_T_CPNUM +2)
     , report(MAX_F_CPNUM + MAX_T_CPNUM +2)
 {
-    db = new DB();
+    //db = new DB();
     FCallNum = 1;
     TCallNum = 1;
 
@@ -27,6 +27,7 @@ CPServer::CPServer(QWidget *parent)
         CP[i].turnOn(i, F_MODE);
     for (int i=MAX_F_CPNUM+1; i<=MAX_T_CPNUM + MAX_F_CPNUM; i++)
         CP[i].turnOn(i, T_MODE);
+    qDebug() << "所有充电桩均已开启" << endl;
 
     timer->start(MS_PER_MIN);
 
@@ -39,7 +40,7 @@ CPServer::CPServer(QWidget *parent)
     tcp_server = new QTcpServer;
     tcp_server->listen(QHostAddress::LocalHost, 6666);
     qDebug()<<("start listen to port 6666 of local host!") << endl;
-    connect(tcp_server, SIGNAL(newConnection()), this, SLOT(onNewConnection()), Qt::QueuedConnection);
+   // connect(tcp_server, SIGNAL(newConnection()), this, SLOT(onNewConnection()), Qt::QueuedConnection);
 
     //管理员
     //curmanager = new manager();
@@ -52,7 +53,8 @@ CPServer::CPServer(QWidget *parent)
 
 void CPServer::updateTimeDeal()
 {
-    qDebug() << QString("%1:%2 进行状态更新").arg(systime->hour(), systime->minute()) << endl;
+    qDebug() << QString("%1:%2 进行状态更新").arg(systime->hour())
+                .arg(systime->minute()) << endl;
         //1、 先考虑充电桩的状态，以及详单和报表的更新
 //        emit signal_startpower();
     bool haveCPFree = 0;    //有充电桩空闲
@@ -60,13 +62,16 @@ void CPServer::updateTimeDeal()
     {
         if (CP[i].state == CP_FREE)   //充电桩处于空闲状态
         {
-             qDebug() << QString("充电桩 %1 处于空闲状态且没人排队").arg(i) << endl;
+
             if (CP[i].queue.size() == 0)  //该充电桩里没人排队
             {
+                qDebug() << QString("充电桩 %1 处于空闲状态且没人排队").arg(i) << endl;
                 haveCPFree = 1;
             }
             else    //有人排队，则可以开始工作
             {
+                if (CP[i].queue.size() < MAX_CHARGE_QUEUE_LEN)
+                    haveCPFree = 1; //还有空位
                 qDebug() << QString("充电桩 %1 处于空闲状态但有人排队").arg(i) << endl;
                 //充电桩队列里有人排队，则可以开始充电
                 //充电桩
@@ -95,6 +100,8 @@ void CPServer::updateTimeDeal()
             }
         }
     }
+    FCallNum = haveCPFree;  //只要有一个空位，就可以叫号
+    haveCPFree = 0;
     for (int i=MAX_F_CPNUM; i<=MAX_F_CPNUM + MAX_T_CPNUM; i++)  //遍历所有充电桩
     {
         if (CP[i].state == CP_FREE)   //充电桩处于空闲状态
@@ -106,6 +113,8 @@ void CPServer::updateTimeDeal()
             }
             else    //有人排队，则可以开始工作
             {
+                if (CP[i].queue.size() < MAX_CHARGE_QUEUE_LEN)
+                    haveCPFree = 1; //还有空位
                 qDebug() << QString("充电桩 %1 处于空闲状态但有人排队").arg(i) << endl;
                 //充电桩队列里有人排队，则可以开始充电
                 //充电桩
@@ -135,38 +144,38 @@ void CPServer::updateTimeDeal()
             }
         }
     }
-
+    FCallNum = haveCPFree;
 //        emit signal_endpower();
         //2、再考虑 等候区的状态
 
         //3、再考虑叫号和调度进入充电区问题
 
         //4、再考虑进入等候区的处理问题
-        QVector<int> q;
-        //先看一下可不可以叫号
-        int calledNum;  //被叫的号
-        int CPid;   //调度确定的充电桩
-        if (FCallNum == 1)
-        {
-            if (waitarea->StartPriority == 1)
-            {
-                calledNum = waitarea->PriorityCallNum(F_MODE);
-            }
+//        QVector<int> q;
+//        //先看一下可不可以叫号
+//        int calledNum;  //被叫的号
+//        int CPid;   //调度确定的充电桩
+//        if (FCallNum == 1)
+//        {
+//            if (waitarea->StartPriority == 1)
+//            {
+//                calledNum = waitarea->PriorityCallNum(F_MODE);
+//            }
 
-            else
-                calledNum = waitarea->CallNum(F_MODE);
-            CPid = sysSchedule(F_MODE);    //叫号后面就是调度
-            GotoChargeArea(F_MODE, CPid, callnumToId[calledNum]);
-        }
-        if (TCallNum == 1)
-        {
-            if (waitarea->StartPriority == 1)
-                calledNum = waitarea->PriorityCallNum(T_MODE);
+//            else
+//                calledNum = waitarea->CallNum(F_MODE);
+//            CPid = sysSchedule(F_MODE);    //叫号后面就是调度
+//            GotoChargeArea(F_MODE, CPid, callnumToId[calledNum]);
+//        }
+//        if (TCallNum == 1)
+//        {
+//            if (waitarea->StartPriority == 1)
+//                calledNum = waitarea->PriorityCallNum(T_MODE);
 
-            else
-                calledNum = waitarea->CallNum(T_MODE);
-            CPid = sysSchedule(T_MODE);
-        }
+//            else
+//                calledNum = waitarea->CallNum(T_MODE);
+//            CPid = sysSchedule(T_MODE);
+//        }
 
 
 }
