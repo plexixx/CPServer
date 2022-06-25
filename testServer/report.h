@@ -5,6 +5,7 @@
 #include <QString>
 #include <chargepile.h>
 #include <bill.h>
+#include <QDebug>
 
 //报表
 class Report
@@ -27,7 +28,7 @@ public:
 //    void GetFromDb(db& database);
     //充电桩每完成一次充电就更新对应的报表，这里的输入是通过充电桩和报表传过来
     void UpdateReport(ChargePile CP, Bill bill);
-    void NewDayUpdateReport(int mon, int week, int day);    //新的一天到来，报表需要更新
+    //void NewDayUpdateReport(int mon, int week, int day);    //新的一天到来，报表需要更新
 
 };
 

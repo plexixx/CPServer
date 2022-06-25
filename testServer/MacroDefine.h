@@ -6,7 +6,7 @@
 #define F_CHARGEPILE 1   //快充电桩
 #define T_CHARGEPILE 0   //慢充电桩
 // 充电桩速度
-#define F_RATE 30      //快充速度，度/min
+#define F_RATE 30     //快充速度，度/h
 #define T_RATE 10        //慢充速度
 //充电桩状态
 #define CP_POWERING 0   //充电中
@@ -17,7 +17,7 @@
 #define MAX_F_CPNUM 2   //最大快充电桩数目
 #define MAX_T_CPNUM 3   //最大慢充电桩数目
 
-#define MS_PER_MIN  1000  //1秒就是一分钟
+#define MS_PER_MIN  10  //1秒就是一分钟
 #define CPUPDATEPEIROD 1    //1min
 
 //充电模式

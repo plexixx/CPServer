@@ -22,12 +22,12 @@ void ChargePile::turnOn(int id, int type)
     if (type == F_CHARGEPILE)
     {
         this->type = F_CHARGEPILE;
-        this->rate = F_RATE;
+        this->rate = F_RATE / 60.0;
     }
     else
     {
         this->type = T_CHARGEPILE;
-        this->rate = T_RATE;
+        this->rate = T_RATE / 60.0;
     }
     state = CP_FREE;
     CurTotalNum = 0;
@@ -49,8 +49,8 @@ void ChargePile::turnOff(int id, int type)
         return ;
     CurTotalNum++;  //从启动开始，累计充电次数+1
     DayTotalNum++;  //今天的累计充电次数+1
-    ChargDu = 0;
-    ChargTime = 0;
+    ChargeDegree = 0;
+    ChargeTime = 0;
     state = CP_POWERING;
     qDebug() << "ChargePile::start充电桩开始充电" << endl;
  }
@@ -64,8 +64,8 @@ void ChargePile::turnOff(int id, int type)
     DayTotalTime += CPUPDATEPEIROD;
     DayTotalPower += CPUPDATEPEIROD * rate;
 
-    ChargDu += CPUPDATEPEIROD * rate;
-    ChargTime += CPUPDATEPEIROD;
+    ChargeDegree += CPUPDATEPEIROD * rate;
+    ChargeTime += CPUPDATEPEIROD;
 
     if(SurplusPowtime <= 0) //充电完成
     {

@@ -31,11 +31,9 @@ Report::Report()
 
 void Report::UpdateReport(ChargePile CP, Bill bill)
 {
-
-
-    TotalChargeNum ++;
-    TotalChargeTime += CP.ChargTime;
-    TotalChargeCapacity += CP.ChargDu;
+    TotalChargeNum++;
+    TotalChargeTime += CP.ChargeTime;
+    TotalChargeCapacity += CP.ChargeDegree;
 
     TotalChargeFare += bill.ChargeFare;
     TotalServeFare += bill.ServeFare;
@@ -43,16 +41,16 @@ void Report::UpdateReport(ChargePile CP, Bill bill)
 }
 
 
-void Report::NewDayUpdateReport(int mon, int week, int day)
-{
-    mon = mon;
-    week = week;
-    day = day;
-    TotalChargeNum = 0;
-    TotalChargeTime = 0;
-    TotalChargeCapacity = 0;
-    TotalChargeFare = 0;
-    TotalServeFare = 0;
-    TotalFare = 0;
-}
+//void Report::NewDayUpdateReport(int mon, int week, int day)
+//{
+//    mon = mon;
+//    week = week;
+//    day = day;
+//    TotalChargeNum = 0;
+//    TotalChargeTime = 0;
+//    TotalChargeCapacity = 0;
+//    TotalChargeFare = 0;
+//    TotalServeFare = 0;
+//    TotalFare = 0;
+//}
 

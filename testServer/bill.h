@@ -6,10 +6,13 @@
 #include <MacroDefine.h>
 #include<QString>
 
+#pragma execution_character_set("utf-8")
+
 class Bill
 {
 public:
     int id;                 //详单编号，系统分配
+    int uid;
     int mode;
     float electricity;      //充电桩每次更新时的充电度数
     //SysTimer CreateTime;    //详单生成时间
@@ -33,7 +36,7 @@ public:
 
 public:
     //收到充电桩的开始充电信号之后，就创造一个详单
-    void createBill(int chargeID,int hour, int min, int mode); //创造详单
+    void createBill(int uid, int chargeID,int hour, int min, int mode); //创造详单
     //收到充电桩完成一段时间的充电信号之后，就更新详单，输入当前所属时刻
     void updateBill(int hour);
     //收到充电桩结束充电的信号后，完成一次操作，详单生成
