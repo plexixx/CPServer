@@ -22,12 +22,12 @@ void ChargePile::turnOn(int id, int type)
     if (type == F_CHARGEPILE)
     {
         this->type = F_CHARGEPILE;
-        this->rate = F_RATE;
+        this->rate = F_RATE / 60.0;
     }
     else
     {
         this->type = T_CHARGEPILE;
-        this->rate = T_RATE;
+        this->rate = T_RATE / 60.0;
     }
     state = CP_FREE;
     CurTotalNum = 0;

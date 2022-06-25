@@ -5,6 +5,7 @@
 #include <QString>
 #include <chargepile.h>
 #include <bill.h>
+#include <QDebug>
 
 //报表
 class Report

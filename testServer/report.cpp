@@ -38,6 +38,10 @@ void Report::UpdateReport(ChargePile CP, Bill bill)
     TotalChargeFare += bill.ChargeFare;
     TotalServeFare += bill.ServeFare;
     TotalFare += bill.TotalFare;
+
+    if(!CP.type)
+    qDebug() << "!!!!!!!!!!报表!!!!!!!!!" << endl
+             << TotalChargeTime << endl;
 }
 
 

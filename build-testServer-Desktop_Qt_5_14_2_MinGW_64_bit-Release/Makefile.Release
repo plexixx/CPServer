@@ -370,8 +370,8 @@ release\moc_cpserver.cpp: ..\testServer\cpserver.h \
 		..\testServer\report.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QString \
 		..\testServer\bill.h \
-		..\testServer\user.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QDebug \
+		..\testServer\user.h \
 		..\testServer\waitarea.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QQueue \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\qqueue.h \
@@ -502,6 +502,7 @@ release\moc_tcpserver.cpp: ..\testServer\tcpserver.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QTimer \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\qtimer.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\qbasictimer.h \
+		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QDebug \
 		..\testServer\db.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtWidgets\QMessageBox \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtWidgets\qmessagebox.h \
@@ -520,7 +521,6 @@ release\moc_tcpserver.cpp: ..\testServer\tcpserver.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtSql\qsqlrelationaltablemodel.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtSql\QSqlError \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtSql\qsqlerror.h \
-		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QDebug \
 		..\testServer\waitarea.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QQueue \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\qqueue.h \
@@ -904,8 +904,8 @@ release\cpserver.obj: ..\testServer\cpserver.cpp ..\testServer\cpserver.h \
 		..\testServer\report.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QString \
 		..\testServer\bill.h \
-		..\testServer\user.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QDebug \
+		..\testServer\user.h \
 		..\testServer\waitarea.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QQueue \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\qqueue.h \
@@ -1047,6 +1047,7 @@ release\db.obj: ..\testServer\db.cpp ..\testServer\db.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\qtimer.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\qbasictimer.h \
 		..\testServer\bill.h \
+		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QDebug \
 		..\testServer\user.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtWidgets\QApplication \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtWidgets\qapplication.h \
@@ -1054,8 +1055,7 @@ release\db.obj: ..\testServer\db.cpp ..\testServer\db.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\qeventloop.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtWidgets\qdesktopwidget.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtGui\qguiapplication.h \
-		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtGui\qinputmethod.h \
-		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QDebug
+		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtGui\qinputmethod.h
 
 release\main.obj: ..\testServer\main.cpp ..\testServer\cpserver.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtWidgets\QMainWindow \
@@ -1211,8 +1211,8 @@ release\main.obj: ..\testServer\main.cpp ..\testServer\cpserver.h \
 		..\testServer\report.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QString \
 		..\testServer\bill.h \
-		..\testServer\user.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QDebug \
+		..\testServer\user.h \
 		..\testServer\waitarea.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QQueue \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\qqueue.h \
@@ -1333,7 +1333,8 @@ release\report.obj: ..\testServer\report.cpp ..\testServer\report.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QTimer \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\qtimer.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\qbasictimer.h \
-		..\testServer\bill.h
+		..\testServer\bill.h \
+		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QDebug
 
 release\tcpserver.obj: ..\testServer\tcpserver.cpp ..\testServer\tcpserver.h \
 		..\testServer\head.h \
@@ -1457,6 +1458,7 @@ release\tcpserver.obj: ..\testServer\tcpserver.cpp ..\testServer\tcpserver.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QTimer \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\qtimer.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\qbasictimer.h \
+		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QDebug \
 		..\testServer\db.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtWidgets\QMessageBox \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtWidgets\qmessagebox.h \
@@ -1475,7 +1477,6 @@ release\tcpserver.obj: ..\testServer\tcpserver.cpp ..\testServer\tcpserver.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtSql\qsqlrelationaltablemodel.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtSql\QSqlError \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtSql\qsqlerror.h \
-		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QDebug \
 		..\testServer\waitarea.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QQueue \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\qqueue.h \
@@ -1622,6 +1623,7 @@ release\tcpsocket.obj: ..\testServer\tcpsocket.cpp ..\testServer\tcpserver.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QTimer \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\qtimer.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\qbasictimer.h \
+		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QDebug \
 		..\testServer\db.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtWidgets\QMessageBox \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtWidgets\qmessagebox.h \
@@ -1640,7 +1642,6 @@ release\tcpsocket.obj: ..\testServer\tcpsocket.cpp ..\testServer\tcpserver.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtSql\qsqlrelationaltablemodel.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtSql\QSqlError \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtSql\qsqlerror.h \
-		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QDebug \
 		..\testServer\waitarea.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QQueue \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\qqueue.h \
@@ -1787,6 +1788,7 @@ release\connectsql.obj: ..\testServer\connectsql.cpp ..\testServer\connectsql.h 
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QTimer \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\qtimer.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\qbasictimer.h \
+		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QDebug \
 		..\testServer\db.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtWidgets\QMessageBox \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtWidgets\qmessagebox.h \
@@ -1805,7 +1807,6 @@ release\connectsql.obj: ..\testServer\connectsql.cpp ..\testServer\connectsql.h 
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtSql\qsqlrelationaltablemodel.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtSql\QSqlError \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtSql\qsqlerror.h \
-		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QDebug \
 		..\testServer\waitarea.h \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\QQueue \
 		..\..\..\Qt\Qt5.12.12\5.12.12\msvc2015_64\include\QtCore\qqueue.h \
