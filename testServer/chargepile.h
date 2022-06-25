@@ -28,8 +28,8 @@ public:
     int DayTotalTime;   //今日累计的充电总时长
     float DayTotalPower;  //今日累计的总充电量
 
-    int ChargTime;      //本次充电的充电时间
-    float ChargDu;      //本次充电的充电度数
+    int ChargeTime;      //本次充电的充电时间
+    float ChargeDegree;      //本次充电的充电度数
 
     int state;      //充电桩状态
 

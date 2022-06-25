@@ -66,6 +66,28 @@ CPServer::CPServer(QWidget *parent)
 
 void CPServer::updateTimeDeal()
 {
+    if(systime->hour() == 3 && systime->minute() == 0)
+    {
+        // 报表展示
+        for(int i = 1; i < CP.size(); i++)
+        {
+            if(i <= MAX_F_CPNUM)
+                qDebug() << QString("---------充电桩F%1情况--------").arg(i) << endl;
+            else if(i <= MAX_F_CPNUM + MAX_T_CPNUM)
+                qDebug() << QString("---------充电桩T%1情况--------").arg(i - MAX_F_CPNUM) << endl;
+            else
+                continue;
+            qDebug() << "2022年6月25日"
+                     << systime->hour() << ":" << systime->minute() << ":" << systime->second() << endl
+                     << "累计充电次数: " << report[i].TotalChargeNum << endl
+                     << "累计充电时长: " << report[i].TotalChargeTime << endl
+                     << "累计充电量: " << report[i].TotalChargeCapacity << endl
+                     << "累计充电费用: " << report[i].TotalChargeFare << endl
+                     << "累计服务费用: " << report[i].TotalServeFare << endl
+                     << "累计总费用: " << report[i].TotalFare << endl
+                     << "-------------------------" << endl;
+        }
+    }
 
     //输入事件处理
     if (systime->minute() % 5 == 0)
