@@ -16,6 +16,8 @@
 #include <waitarea.h>
 #include <user.h>
 
+#pragma execution_character_set("utf-8")
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
