@@ -10,7 +10,7 @@ CPServer::CPServer(QWidget *parent)
     , CP(MAX_F_CPNUM + MAX_T_CPNUM +2)
     , report(MAX_F_CPNUM + MAX_T_CPNUM +2)
 {
-    //db = new DB();
+    db = new DB();
     FCallNum = 1;
     TCallNum = 1;
 
@@ -140,7 +140,7 @@ void CPServer::updateTimeDeal()
     }
     FCallNum = haveCPFree;  //只要有一个空位，就可以叫号
     haveCPFree = 0;
-    for (int i=MAX_F_CPNUM; i<=MAX_F_CPNUM + MAX_T_CPNUM; i++)  //遍历所有充电桩
+    for (int i=MAX_F_CPNUM+1; i<=MAX_F_CPNUM + MAX_T_CPNUM; i++)  //遍历所有充电桩
     {
         if (CP[i].state == CP_FREE)   //充电桩处于空闲状态
         {
@@ -210,6 +210,7 @@ void CPServer::EventCome(char ch, QString userId, char mode, float degree)
             }
 
             //更改用户状态
+            qDebug() << QString("处理用户 %d1 的到来信息").arg(userId) << endl;
             curUser->WaitNum = waitarea->CusArrive(uid, mode);   //修改排队号
             callnumToId[curUser->WaitNum] = curUser->id;
             curUser->mode = mode;
@@ -323,6 +324,11 @@ bool CPServer::getLoginResult(QString name, QString pswd)
     curUser = user;
     userList.insert(user->id, user);
     return true;
+}
+
+void CPServer::getEvent()
+{
+
 }
 
 bool CPServer::getRegResult(QString name, QString pswd)

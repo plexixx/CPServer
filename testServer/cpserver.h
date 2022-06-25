@@ -44,6 +44,8 @@ private:
     bool FCallNum;
     bool TCallNum;
 
+    QMap<QString, QString> TimetoEvent; //时间对事件的映射
+
 
 
 public:
@@ -84,6 +86,8 @@ public:
     void closeEvent(QCloseEvent* event);  // 关闭连接事件
 
     void GotoChargeArea(bool mode, int CPid, int userId);
+
+    void getEvent();
 
 
 public slots:
