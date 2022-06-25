@@ -2,6 +2,8 @@
 #include "ui_cpserver.h"
 #include <QDebug>
 
+QVector<User> aCustomer;
+
 
 CPServer::CPServer(QWidget *parent)
     : QObject(parent)

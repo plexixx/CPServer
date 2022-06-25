@@ -1,7 +1,5 @@
 ﻿#include "waitarea.h"
 
-extern QVector<User> aCustomer;
-
 WaitArea::WaitArea()
 {
     CurParkNum = 0;
