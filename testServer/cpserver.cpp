@@ -151,7 +151,7 @@ void CPServer::updateTimeDeal()
             else
                 calledNum = waitarea->CallNum(F_MODE);
             CPid = sysSchedule(F_MODE);    //叫号后面就是调度
-            GotoChargArea(F_MODE, CPid, callnumToId[calledNum]);
+            GotoChargeArea(F_MODE, CPid, callnumToId[calledNum]);
         }
         if (TCallNum == 1)
         {
@@ -453,7 +453,13 @@ bool CPServer::NewCusArrive(int chargeType, int chargeQuantity)
     return true;
 }
 
-void CPServer::GotoChargArea(bool mode, int CPid, int userId)
+void CPServer::delCus(int CPid, bool mode, int userID)
+{
+
+}
+
+
+void CPServer::GotoChargeArea(bool mode, int CPid, int userId)
 {
     if (mode == F_MODE)
     {
