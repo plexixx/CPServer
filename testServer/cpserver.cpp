@@ -24,7 +24,7 @@ CPServer::CPServer(QWidget *parent)
     //系统时间更新
     //systimer = new SysTimer();
     timer = new QTimer(); //创建定时器
-    systime = new QTime(6,00); // 6:00:00，启动后进入到5点55，
+    systime = new QTime(6,13); // 6:00:00，启动后进入到5点55，
     connect(timer, SIGNAL(timeout()), this, SLOT(addSecs()));
     //连接槽函数，将timer的timeout行为，连接到updateTime函数中
     connect(timer, SIGNAL(timeout()), this, SLOT(updateTimeDeal()));
@@ -83,7 +83,7 @@ void CPServer::updateTimeDeal()
     qDebug() << QString("%1:%2 进行状态更新").arg(systime->hour())
                 .arg(systime->minute()) << endl;
 
-    emit signal_endpower();
+    //emit signal_endpower();
    // 考虑 等候区的状态
     //考虑叫号和调度进入充电区问题
     //考虑进入等候区的处理问题
@@ -102,13 +102,17 @@ void CPServer::updateTimeDeal()
             }
             else
                 userId = waitarea->CallNum(F_MODE);
-            qDebug() << QString("叫完号了===%1======").arg(userId) << endl;
-            CPid = sysSchedule(F_MODE);    //叫号后面就是调度
-            qDebug() << QString("要放到充电桩%1去").arg(CPid) << endl;
-            GotoChargeArea(F_MODE, CPid, userId);
-            allUser[userId].prog =CHARGEWAIT;
-            qDebug() << QString("用户%1到达快充电桩%2")
-                     .arg(userId).arg(CPid)<< endl;
+
+
+
+                qDebug() << QString("叫完号了===%1======").arg(userId) << endl;
+                CPid = sysSchedule(F_MODE);    //叫号后面就是调度
+                qDebug() << QString("要放到充电桩%1去").arg(CPid) << endl;
+                GotoChargeArea(F_MODE, CPid, userId);
+                allUser[userId].prog =CHARGEWAIT;
+                qDebug() << QString("用户%1到达快充电桩%2")
+                         .arg(userId).arg(CPid)<< endl;
+
         }
         if (TCallNum == 1 && waitarea->TQueue.size()  > waitarea->it_T)
         {
@@ -119,6 +123,7 @@ void CPServer::updateTimeDeal()
             CPid = sysSchedule(T_MODE);
             GotoChargeArea(T_MODE, CPid, userId);
             allUser[userId].prog =CHARGEWAIT;
+            allUser[userId].CPid = CPid;
             qDebug() << QString("用户%1到达慢充电桩%2")
                      .arg(userId).arg(CPid)<< endl;
         }
@@ -248,6 +253,18 @@ void CPServer::EventCome(QString ch, QString userId, QString mode, float degree)
         if (degree == 0)   //中止充电
         {
 
+            if (allUser[uid].prog == WAIT)  //在等候区中就直接进行修改
+            {
+                //取消充电
+                qDebug() << "等候区取消充电" << endl;
+                allUser[uid].mode = mode == "F" ? F_MODE : T_MODE;
+                waitarea->ReGenerateNum(uid, allUser[uid].mode);
+            }
+            else if (allUser[uid].prog == CHARGEPOW || CHARGEWAIT)
+            {
+                qDebug() << "充电区取消充电" << endl;
+                CP[allUser[uid].CPid].cancelPower(uid);
+            }
         }
         else
         {
@@ -462,7 +479,8 @@ void CPServer::getEvent()
 {
     QFile file ("../test.txt");  //建立一个文件对象
 
-
+    //QFile file ("../change.txt");
+    qDebug() << "开始读取文件";
     if (file.open(QFile::ReadOnly | QFile::Text)) //以只读模式打开文件成功
     {
         QTextStream in(&file);
@@ -472,7 +490,7 @@ void CPServer::getEvent()
         while (!in.atEnd())   //判断文本流是否到达了文件尾
         {
             QString str = in.readLine(); //读取一行，不包含换行符
-
+            qDebug() << str << endl;
             if (str.isEmpty())
             {
                 qDebug() << "Failed to read line, no information matched";

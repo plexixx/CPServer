@@ -72,7 +72,7 @@ void ChargePile::turnOff(int id, int type)
         //timer.stop();   //停止计时
         SurplusPowtime = 0;
         state = CP_FREE;    //结束充电状态
-        queue.pop_front();
+
     }
  }
 

@@ -34,6 +34,8 @@ public:
     int WaitNum;        //排队号码
     float QueueTime;   //排队时长
     float NeedChargeTime;  //需要的充电时长，在充电时就不断递减
+
+
 public:
     User();
 
