@@ -10,6 +10,7 @@ class Bill
 {
 public:
     int id;                 //详单编号，系统分配
+    int mode;
     float electricity;      //充电桩每次更新时的充电度数
     //SysTimer CreateTime;    //详单生成时间
     int createHour;

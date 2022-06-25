@@ -6,9 +6,8 @@
 CPServer::CPServer(QWidget *parent)
     : QObject(parent)
     , ui(new Ui::MainWindow)
-    , F_CP(MAX_F_CPNUM + 1)
-    , T_CP(MAX_T_CPNUM + 1)
-    , report(MAX_F_CPNUM + MAX_T_CPNUM +1)
+    , CP(MAX_F_CPNUM + MAX_T_CPNUM +2)
+    , report(MAX_F_CPNUM + MAX_T_CPNUM +2)
 {
     db = new DB();
     FCallNum = 1;
@@ -44,11 +43,30 @@ CPServer::CPServer(QWidget *parent)
 
 void CPServer::updateTimeDeal()
 {
-    if (systime->msec() % 5 == 0)   //5分钟考虑一次更新
-    {
+
         //1、 先考虑充电桩的状态，以及详单和报表的更新
 //        emit signal_startpower();
-
+    bool haveCPFree = 0;    //有充电桩空闲
+    for (int i=1; i<=MAX_F_CPNUM; i++)  //遍历所有充电桩
+    {
+        if (CP[i].state == CP_FREE)   //充电桩处于空闲状态
+        {
+            if (CP[i].queue.size() == 0)  //该充电桩里没人排队
+            {
+                haveCPFree = 1;
+            }
+            else
+            {
+                //充电桩队列里有人排队，则可以开始充电
+                //充电桩
+                int topUserId = CP[i].queue[0];
+                CP[i].start(aCustomer[topUserId].CurPower);
+                // 详单
+                Bill bill;
+                bill.createBill(i, systime->hour(), systime->minute());
+            }
+        }
+    }
 
 //        emit signal_endpower();
         //2、再考虑 等候区的状态
@@ -81,7 +99,6 @@ void CPServer::updateTimeDeal()
                 calledNum = waitarea->CallNum(T_MODE);
             CPid = sysSchedule(T_MODE);
         }
-    }
 
 
 }
@@ -124,7 +141,7 @@ void CPServer::EventCome(char ch, int userId, int mode, float degree)
 void CPServer::addSecs()
 {
     // 空着就行
-    systime->addSecs(60*5); //每过去五分钟，进行状态的刷新
+    systime->addSecs(60); //每过去1分钟，进行状态的刷新
 }
 
 bool CPServer::getLoginResult(QString name, QString pswd)
@@ -206,14 +223,14 @@ bool CPServer::TurnOnCP(int CPid, bool mode)
     {
         if(CPid < 1 || CPid > MAX_T_CPNUM)
             return false;
-        if (T_CP[CPid].ChargeId) // 编号不为0，说明已经打开
+        if (CP[CPid].ChargeId) // 编号不为0，说明已经打开
         {
             qDebug() << "充电桩已经打开，无需再次打开" << endl;
             return false;
         }
         else    // 编号为0
         {
-            T_CP[CPid].ChargeId = CPid;
+            CP[CPid].ChargeId = CPid;
             qDebug() << "充电桩成功启动" << endl;
             return true;
         }
@@ -222,14 +239,14 @@ bool CPServer::TurnOnCP(int CPid, bool mode)
     {
         if(CPid < 1 || CPid > MAX_F_CPNUM)
             return false;
-        if (F_CP[CPid].ChargeId) // 编号不为0，说明已经打开
+        if (CP[CPid].ChargeId) // 编号不为0，说明已经打开
         {
             qDebug() << "充电桩已经打开，无需再次打开" << endl;
             return false;
         }
         else    // 编号为0
         {
-            F_CP[CPid].ChargeId = CPid;
+            CP[CPid].ChargeId = CPid;
             qDebug() << "充电桩成功启动" << endl;
             return true;
         }
@@ -245,14 +262,14 @@ bool CPServer::TurnOffCP(int CPid, bool mode)
     {
         if(CPid < 1 || CPid > MAX_T_CPNUM)
             return 0;
-        if (T_CP[CPid].ChargeId == 0) //编号为0，说明已经关闭
+        if (CP[CPid].ChargeId == 0) //编号为0，说明已经关闭
         {
             qDebug() << "充电桩已经关闭，无需再次关闭" << endl;
             return false;
         }
         else    //编号为0
         {
-            T_CP[CPid].ChargeId = 0;
+            CP[CPid].ChargeId = 0;
             qDebug() << "充电桩关闭" << endl;
             return true;
         }
@@ -261,14 +278,14 @@ bool CPServer::TurnOffCP(int CPid, bool mode)
     {
         if(CPid < 1 || CPid > MAX_F_CPNUM)
             return false;
-        if (F_CP[CPid].ChargeId == 0) //编号为0，说明已经关闭
+        if (CP[CPid].ChargeId == 0) //编号为0，说明已经关闭
         {
             qDebug() << "充电桩已经关闭，无需再次关闭" << endl;
             return false;
         }
         else    //编号为0
         {
-            F_CP[CPid].ChargeId = 0;
+            CP[CPid].ChargeId = 0;
             qDebug() << "充电桩关闭" << endl;
             return true;
         }
@@ -293,11 +310,11 @@ void CPServer::GotoChargArea(bool mode, int CPid, int userId)
 {
     if (mode == F_MODE)
     {
-        F_CP[CPid].queue.push_back(userId);
+        CP[CPid].queue.push_back(userId);
     }
     else
     {
-        T_CP[CPid].queue.push_back(userId);
+        CP[CPid].queue.push_back(userId);
     }
 }
 
@@ -312,12 +329,12 @@ int CPServer::sysSchedule(bool mode)
     //QVector<ChargePile> CP;  //所有的充电桩
     if(mode) // 快充
     {
-        for(int i = 0; i < MAX_F_CPNUM; i++)
+        for(int i = 1; i <= MAX_F_CPNUM; i++)
         {
-            if(F_CP[i].queue.size() >= MAX_CHARGE_QUEUE_LEN)
+            if(CP[i].queue.size() >= MAX_CHARGE_QUEUE_LEN)
                 continue; //排队队列已满
             int tmpWaitTime = 0;    //在充电桩i时的完成充电所需时长
-            QVector<int> iQueue = F_CP[i].queue;
+            QVector<int> iQueue = CP[i].queue;
             //遍历整个排队队列，求出等待时长
             for (int j=0; j<iQueue.size(); j++)
             {
@@ -326,18 +343,18 @@ int CPServer::sysSchedule(bool mode)
             if (minTime > tmpWaitTime)
             {
                 minTime = tmpWaitTime;
-                selectCP = F_CP[i].ChargeId;
+                selectCP = CP[i].ChargeId;
             }
         }
     }
     else    // 慢充
     {
-        for(int i = 0; i < MAX_T_CPNUM; i++)
+        for(int i = MAX_F_CPNUM+1; i <= MAX_T_CPNUM + MAX_F_CPNUM; i++)
         {
-            if(F_CP[i].queue.size() >= MAX_CHARGE_QUEUE_LEN)
+            if(CP[i].queue.size() >= MAX_CHARGE_QUEUE_LEN)
                 continue; //排队队列已满
             int tmpWaitTime = 0;    //在充电桩i时的完成充电所需时长
-            QVector<int> iQueue = T_CP[i].queue;
+            QVector<int> iQueue = CP[i].queue;
             //遍历整个排队队列，求出等待时长
             for (int j=0; j<iQueue.size(); j++)
             {
@@ -346,7 +363,7 @@ int CPServer::sysSchedule(bool mode)
             if (minTime > tmpWaitTime)
             {
                 minTime = tmpWaitTime;
-                selectCP = T_CP[i].ChargeId;
+                selectCP = CP[i].ChargeId;
             }
         }
     }
@@ -372,12 +389,12 @@ int CPServer::timeSchedule(int errID, bool mode)
         // 将其它同类型充电桩中尚未充电的车辆与故障候队列中车辆合为一组
         for(int i = 0; i < MAX_F_CPNUM; i++)
         {
-            for(int j = 1; j < F_CP[i].queue.size(); j++)
+            for(int j = 1; j < CP[i].queue.size(); j++)
             {
-                int uid = F_CP[i].queue[j];
+                int uid = CP[i].queue[j];
                 map.insert(userList[uid]->WaitNum, uid);
             }
-            F_CP[i].queue.clear();
+            CP[i].queue.clear();
         }
         waitarea->TimeOrderCallNum(mode, q);
     }
@@ -385,12 +402,12 @@ int CPServer::timeSchedule(int errID, bool mode)
     {
         for(int i = 0; i < MAX_T_CPNUM; i++)
         {
-            for(int j = 1; j < T_CP[i].queue.size(); j++)
+            for(int j = 1; j < CP[i].queue.size(); j++)
             {
-                int uid = T_CP[i].queue[j];
+                int uid = CP[i].queue[j];
                 map.insert(userList[uid]->WaitNum, uid);
             }
-            T_CP[i].queue.clear();
+            CP[i].queue.clear();
         }
     }
 
@@ -409,13 +426,13 @@ int CPServer::prioritySchedule(int errID, bool mode)
     waitarea->CallFlag = false;
     if(mode)
     {
-        waitarea->StartPriorityCallNum(mode, F_CP[errID].queue);
+        waitarea->StartPriorityCallNum(mode, CP[errID].queue);
         return waitarea->PriorityCallNum(mode);
     }
 
     else
     {
-        waitarea->StartPriorityCallNum(mode, T_CP[errID].queue);
+        waitarea->StartPriorityCallNum(mode, CP[errID].queue);
         return waitarea->PriorityCallNum(mode);
     }
 }

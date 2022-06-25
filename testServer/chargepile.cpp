@@ -3,6 +3,7 @@
 ChargePile::ChargePile()
 {
     ChargeId = 0;            //为0表示还没有开启
+    state = CP_FREE;
     //connect()
 }
 
@@ -47,7 +48,6 @@ void ChargePile::turnOff(int id, int type)
     CurTotalNum++;  //从启动开始，累计充电次数+1
     DayTotalNum++;  //今天的累计充电次数+1
     state = CP_POWERING;
-
  }
 
  void ChargePile::OverPeriodUpdate()
