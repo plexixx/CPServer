@@ -1,12 +1,7 @@
 ﻿#include "cpserver.h"
 #include "ui_cpserver.h"
 #include <QDebug>
-#include <QFile>
-#include <QTextStream>
-#include <QIODevice>
-#include <QTextCodec>
-#include <QByteArray>
-#include <Windows.h>
+
 
 QVector<User> aCustomer;
 
@@ -22,6 +17,32 @@ CPServer::CPServer(QWidget *parent)
     TCallNum = 1;
     getEvent();
 
+    for (int i=1; i<=MAX_USER_NUM; i++)
+    {
+        User tmpUser(i);
+        allUser.push_back(tmpUser);
+    }
+
+
+//    file_1 = new QFile("../1.txt");  //建立一个文件对象
+//    file_2 = new QFile("../2.txt");
+//    file_3 = new QFile("../3.txt");
+//    file_4 = new QFile("../4.txt");
+//    file_5 = new QFile("../5.txt");
+//    file_6 = new QFile("../6.txt");
+//    if (file_1->open(QFile::Append | QFile::Text) == 0)
+//        qDebug() << "打开文件失败" << endl;
+//    if (file_2->open(QFile::Append | QFile::Text) == 0)
+//        qDebug() << "打开文件失败" << endl;
+//    if (file_3->open(QFile::Append | QFile::Text) == 0)
+//        qDebug() << "打开文件失败" << endl;
+//    if (file_4->open(QFile::Append | QFile::Text) == 0)
+//        qDebug() << "打开文件失败" << endl;
+//    if (file_5->open(QFile::Append | QFile::Text) == 0)
+//        qDebug() << "打开文件失败" << endl;
+//    if (file_6->open(QFile::Append | QFile::Text) == 0)
+//        qDebug() << "打开文件失败" << endl;
+
 //    CoInitializeEx(NULL, COINIT_MULTITHREADED);
 //    queueExcel.newExcel("try.xlsx");
 //    queueExcel.setCellValue(1, 1, "111");
@@ -30,7 +51,7 @@ CPServer::CPServer(QWidget *parent)
     //系统时间更新
     //systimer = new SysTimer();
     timer = new QTimer(); //创建定时器
-    systime = new QTime(6,13); // 6:00:00，启动后进入到5点55，
+    systime = new QTime(5,55); // 6:00:00，启动后进入到5点55，
     connect(timer, SIGNAL(timeout()), this, SLOT(addSecs()));
     //连接槽函数，将timer的timeout行为，连接到updateTime函数中
     connect(timer, SIGNAL(timeout()), this, SLOT(updateTimeDeal()));
@@ -66,7 +87,7 @@ CPServer::CPServer(QWidget *parent)
 
 void CPServer::updateTimeDeal()
 {
-
+    bool testFlag = 0;
     //输入事件处理
     if (systime->minute() % 5 == 0)
     {
@@ -82,6 +103,7 @@ void CPServer::updateTimeDeal()
             QString id = eventStr.section(',', 1, 1);
             QString mode = eventStr.section(',', 2, 2);
             float du = eventStr.section(',', 3, 3).toInt();
+            testFlag = 1;
             EventCome(type, id, mode, du);
         }
     }
@@ -227,6 +249,11 @@ void CPServer::updateTimeDeal()
             CP[i].OverPeriodUpdate();   //充电桩进行刷新
             allBill[CPtoBill[i]].updateBill(systime->hour());   //详单进行刷新
             allUser[CP[i].queue[0]].NeedChargeTime -= CPUPDATEPEIROD;
+            float rate = allUser[CP[i].queue[0]].mode == F_MODE ? F_RATE : T_RATE;
+            qDebug() << QString("rate====%1=========").arg(rate);
+            //Sleep(10);
+            allUser[CP[i].queue[0]].havePower += CPUPDATEPEIROD * (rate / 60.0);
+            qDebug() << QString("havepower====%1=========").arg(allUser[CP[i].queue[0]].havePower);
             if (CP[i].state == CP_FREE) //由充电状态转为空闲状态，说明充电结束
             {
                  allBill[CPtoBill[i]].finishBill(systime->hour(), systime->minute());
@@ -236,7 +263,170 @@ void CPServer::updateTimeDeal()
     }
     FCallNum = haveCPFree;
 
+    //
+    if (testFlag)
+    {
+        testQueue();
+    }
 
+}
+
+
+void CPServer::testQueue()
+{
+
+    QFile file_1("../1.txt");  //建立一个文件对象
+    QFile file_2("../2.txt");
+    QFile file_3("../3.txt");
+    QFile file_4("../4.txt");
+    QFile file_5("../5.txt");
+    QFile file_6("../6.txt");
+    if (file_1.open(QFile::Append | QFile::Text) == 0)
+        qDebug() << "打开文件失败" << endl;
+    if (file_2.open(QFile::Append | QFile::Text) == 0)
+        qDebug() << "打开文件失败" << endl;
+    if (file_3.open(QFile::Append | QFile::Text) == 0)
+        qDebug() << "打开文件失败" << endl;
+    if (file_4.open(QFile::Append | QFile::Text) == 0)
+        qDebug() << "打开文件失败" << endl;
+    if (file_5.open(QFile::Append | QFile::Text) == 0)
+        qDebug() << "打开文件失败" << endl;
+    if (file_6.open(QFile::Append | QFile::Text) == 0)
+        qDebug() << "打开文件失败" << endl;
+//    if (file_1->open(QFile::Append | QFile::Text)) //以只读模式打开文件成功
+//    {
+        for (int i=0; i<CP[1].queue.size(); i++)
+        {
+            qDebug() << "充电桩1"
+            QString str = "(V";
+            int userId = CP[1].queue[i];
+            str += QString::number(userId) + ",";
+            str += QString::number(allUser[userId].havePower, 'f', 2) + ",";
+            int billId = CPtoBill[1];
+            str += QString::number(allBill[billId].TotalFare, 'f', 2) + ")\n";
+            file_1.write(str.toUtf8());
+        }
+//    }
+//    else
+//    {
+//        qDebug() << "File_1 Open Failed";
+//    }
+
+//    if (file_2->open(QFile::Append | QFile::Text)) //以只读模式打开文件成功
+//    {
+        for (int i=0; i<CP[2].queue.size(); i++)
+        {
+            QString str = "(V";
+            int userId = CP[2].queue[i];
+            str += QString::number(userId) + ",";
+            str += QString::number(allUser[userId].havePower, 'f', 2) + ",";
+            int billId = CPtoBill[2];
+            str += QString::number(allBill[billId].TotalFare, 'f', 2) + "\n";
+            file_2.write(str.toUtf8());
+        }
+//    }
+//    else
+//    {
+//        qDebug() << "File_2 Open Failed";
+//    }
+
+//    if (file_3->open(QFile::Append | QFile::Text)) //以只读模式打开文件成功
+//    {
+        for (int i=0; i<CP[3].queue.size(); i++)
+        {
+            QString str = "(V";
+            int userId = CP[3].queue[i];
+            str += QString::number(userId) + ",";
+            str += QString::number(allUser[userId].havePower, 'f', 2) + ",";
+            int billId = CPtoBill[3];
+            str += QString::number(allBill[billId].TotalFare, 'f', 2) + "\n";
+            file_3.write(str.toUtf8());
+        }
+//    }
+//    else
+//    {
+//        qDebug() << "File_3 Open Failed";
+//    }
+
+//    if (file_4->open(QFile::Append | QFile::Text)) //以只读模式打开文件成功
+//    {
+        for (int i=0; i<CP[4].queue.size(); i++)
+        {
+            QString str = "(V";
+            int userId = CP[4].queue[i];
+            str += QString::number(userId) + ",";
+            str += QString::number(allUser[userId].havePower, 'f', 2) + ",";
+            int billId = CPtoBill[4];
+            str += QString::number(allBill[billId].TotalFare, 'f', 2) + "\n";
+            file_4.write(str.toUtf8());
+        }
+//    }
+//    else
+//    {
+//        qDebug() << "File_4 Open Failed";
+//    }
+
+//    if (file_5->open(QFile::Append | QFile::Text)) //以只读模式打开文件成功
+//    {
+        for (int i=0; i<CP[5].queue.size(); i++)
+        {
+            QString str = "(V";
+            int userId = CP[5].queue[i];
+            str += QString::number(userId) + ",";
+            str += QString::number(allUser[userId].havePower, 'f', 2) + ",";
+            int billId = CPtoBill[5];
+            str += QString::number(allBill[billId].TotalFare, 'f', 2) + "\n";
+            file_5.write(str.toUtf8());
+        }
+//    }
+//    else
+//    {
+//        qDebug() << "File_5 Open Failed";
+//    }
+
+//    if (file_6->open(QFile::Append | QFile::Text)) //以只读模式打开文件成功
+//    {
+//        int ff = waitarea->it_F;
+//        int tt = waitarea->it_T;
+//        while (ff < waitarea->FQueue.size() && tt < waitarea->TQueue.size())
+//        {
+//            if (waitarea->FQueue[ff] < waitarea->FQueue[ff])
+
+//        }
+        //直接将两个队列合并
+        QVector<User> tmpUser;
+            for(int i=waitarea->it_F; i<waitarea->FQueue.size(); i++)
+            {
+                if (waitarea->FQueue[i] != -1)
+                    tmpUser.push_back(allUser[waitarea->FQueue[i]]);
+            }
+            for(int i=waitarea->it_T; i<waitarea->TQueue.size(); i++)
+            {
+                if (waitarea->TQueue[i] != -1)
+                    tmpUser.push_back(allUser[waitarea->TQueue[i]]);
+            }
+
+            //按排队号码先后顺序
+            std::sort(tmpUser.begin(), tmpUser.end());
+            QString str;
+            for (int i=0; i<tmpUser.size(); i++)
+            {
+                str += "(V";
+                str += QString::number(tmpUser[i].id) + ",";
+                str += tmpUser[i].mode == F_MODE ? "F" : "T";
+                str += ",";
+                str += QString::number(tmpUser[i].ChargeCapacity, 'f', 2) + ")";
+            }
+
+            str = str.left(str.length() - 1);
+            str += "\n";
+            file_6.write(str.toUtf8());
+//    }
+//    else
+//    {
+//        qDebug() << "File_6 Open Failed";
+
+//    }
 
 }
 
@@ -257,7 +447,6 @@ void CPServer::EventCome(QString ch, QString userId, QString mode, float degree)
 
         if (degree == 0)   //中止充电
         {
-
             if (allUser[uid].prog == WAIT)  //在等候区中就直接进行修改
             {
                 //取消充电
@@ -265,7 +454,7 @@ void CPServer::EventCome(QString ch, QString userId, QString mode, float degree)
                 allUser[uid].mode = mode == "F" ? F_MODE : T_MODE;
                 waitarea->ReGenerateNum(uid, allUser[uid].mode);
             }
-            else if (allUser[uid].prog == CHARGEPOW || CHARGEWAIT)
+            else if (allUser[uid].prog == CHARGEPOW || allUser[uid].prog == CHARGEWAIT)
             {
                 qDebug() << "充电区取消充电" << endl;
                 CP[allUser[uid].CPid].cancelPower(uid);

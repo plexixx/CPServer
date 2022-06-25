@@ -7,6 +7,7 @@ release/report.o
 release/tcpserver.o
 release/tcpsocket.o
 release/connectsql.o
+release/testqueue.o
 release/user.o
 release/waitarea.o
 release/moc_cpserver.o

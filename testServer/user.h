@@ -26,6 +26,7 @@ public:
     float CurPower;        //当前电量
     float ChargeCapacity;   //请求充电量
     float MaxCapacity;     //车辆电池总容量(度)
+    float havePower;
     bool mode;          //充电模式
 
     int prog;         //充电进度，分为在等候区还是在充电区
@@ -38,6 +39,7 @@ public:
 
 public:
     User();
+    User(int i);
 
     //更新用户状态
     void toChargeArea(); //进入充电区
@@ -51,7 +53,7 @@ public:
 
     bool operator < ( const User &b ) const
     {
-         return WaitNum < b.WaitNum;
+         return id < b.id;
     }
 };
 

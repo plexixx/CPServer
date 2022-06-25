@@ -16,6 +16,13 @@
 #include <waitarea.h>
 #include <user.h>
 
+
+#include <QFile>
+#include <QTextStream>
+#include <QIODevice>
+#include <QTextCodec>
+#include <QByteArray>
+#include <Windows.h>
 //#include "qexcelexport.h"
 
 #pragma execution_character_set("utf-8")
@@ -53,7 +60,12 @@ private:
 
     QMap<QString, QString> TimetoEvent; //时间对事件的映射
 
-
+//    QFile *file_1;
+//    QFile *file_2;
+//    QFile *file_3;
+//    QFile *file_4;
+//    QFile *file_5;
+//    QFile *file_6;
 
 public:
     //处理事件
@@ -95,6 +107,8 @@ public:
     void GotoChargeArea(bool mode, int CPid, int userId);
 
     void getEvent();
+
+    void testQueue();
 
 
 public slots:
