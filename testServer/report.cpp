@@ -1,12 +1,13 @@
 ﻿#include "report.h"
 
 //报表
-Report::Report(int Mon, int Week, int Day, int Id)
+Report::Report(QString timeStr)
 {
-    mon = Mon;
-    week = Week;
-    day = Day;
-    CPid = Id;
+//    mon = Mon;
+//    week = Week;
+//    day = Day;
+//    CPid = Id;
+    this->timeStr = timeStr;
 }
 
 Report::Report()

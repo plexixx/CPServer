@@ -2,6 +2,7 @@
 #include "ui_cpserver.h"
 #include <QDebug>
 
+QVector<User> aCustomer;
 
 CPServer::CPServer(QWidget *parent)
     : QObject(parent)
@@ -68,6 +69,7 @@ void CPServer::updateTimeDeal()
                 allBill.end()->id = allBill.size()-1;   //设置详单编号
                 CPtoBill[i] = allBill.end()->id;
                 //报表
+                Report newreport("6-16");
 
 
             }
