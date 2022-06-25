@@ -7,6 +7,7 @@ WaitArea::WaitArea()
     CallFlag = true;
     it_F = 0;
     it_T = 0;
+    StartPriority = 0;
 }
 
 int WaitArea::CusArrive(int cusId, int askType)

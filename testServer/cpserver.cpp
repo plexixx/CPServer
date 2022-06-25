@@ -102,8 +102,9 @@ void CPServer::updateTimeDeal()
             }
             else
                 userId = waitarea->CallNum(F_MODE);
+            qDebug() << QString("叫完号了===%1======").arg(userId) << endl;
             CPid = sysSchedule(F_MODE);    //叫号后面就是调度
-
+            qDebug() << QString("要放到充电桩%1去").arg(CPid) << endl;
             GotoChargeArea(F_MODE, CPid, userId);
 
             qDebug() << QString("用户%1到达快充电桩%2")
@@ -252,7 +253,7 @@ void CPServer::EventCome(QString ch, QString userId, QString mode, float degree)
         qDebug() << QString("用户 %1 对应等待号 %2 检测 %3").arg(uid).arg(allUser[uid].WaitNum)
                     .arg(callnumToId[allUser[uid].WaitNum])
                  << endl;
-        allUser[uid].mode = mode == "T" ? F_MODE : T_MODE;
+        allUser[uid].mode = mode == "F" ? F_MODE : T_MODE;
         qDebug() << "3=======cpserver=======" << endl;
         allUser[uid].ChargeCapacity = degree;
         qDebug() << "4========cpserver=======" << endl;
@@ -668,7 +669,7 @@ int CPServer::sysSchedule(bool mode)
             //遍历整个排队队列，求出等待时长
             for (int j=0; j<iQueue.size(); j++)
             {
-                tmpWaitTime += aCustomer[iQueue[j]].NeedChargeTime;
+                tmpWaitTime += allUser[iQueue[j]].NeedChargeTime;
             }
             if (minTime > tmpWaitTime)
             {
@@ -688,7 +689,7 @@ int CPServer::sysSchedule(bool mode)
             //遍历整个排队队列，求出等待时长
             for (int j=0; j<iQueue.size(); j++)
             {
-                tmpWaitTime += aCustomer[iQueue[j]].NeedChargeTime;
+                tmpWaitTime += allUser[iQueue[j]].NeedChargeTime;
             }
             if (minTime > tmpWaitTime)
             {
