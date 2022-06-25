@@ -52,7 +52,7 @@ CPServer::CPServer(QWidget *parent)
 
 void CPServer::updateTimeDeal()
 {
-
+    qDebug() << "进行状态更新" << endl;
         //1、 先考虑充电桩的状态，以及详单和报表的更新
 //        emit signal_startpower();
     bool haveCPFree = 0;    //有充电桩空闲
