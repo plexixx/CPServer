@@ -43,6 +43,8 @@ public:
     //最后的生成号码如需区别可以将当前号码与充电模式进行结合
     int CusArrive(int cusId, int askType);
 
+    void delCus(int cusId, int askType);
+
     //以下为各种叫号方式
     //注意，必须是判断充电桩有空位时才进行叫号
     int CallNum(int askType);     //普通叫号，指的是等候区的叫号，传入请求类型
