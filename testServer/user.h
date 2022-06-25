@@ -40,6 +40,8 @@ public:
     //更新用户状态
     void toChargeArea(); //进入充电区
 
+    void updateRequest(float degree, bool mode);
+
 //    bool operator<(const Customer& a, const Customer& b)//声明
 //    {
 //        return a.WaitNum < b.WaitNum;

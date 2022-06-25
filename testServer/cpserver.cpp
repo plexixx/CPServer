@@ -121,30 +121,96 @@ CPServer::~CPServer()
 }
 
 //处理事件
-void CPServer::EventCome(char ch, int userId, int mode, float degree)
+void CPServer::EventCome(char ch, QString userId, char mode, float degree)
 {
     User* curUser;
     switch (ch) {
         case 'A':
-            curUser = userList[userId];
+        {
+            userId.remove(0, 1);
+            int uid = userId.toInt();
+            curUser = userList[uid];
             if (waitarea->CurParkNum >= MAX_PARK_NUM)
             {
                 qDebug()<< "当前等候区车位已满，用户无法进入充电桩" << endl;
             }
 
             //更改用户状态
-            curUser->WaitNum = waitarea->CusArrive(userId, mode);   //修改排队号
+            curUser->WaitNum = waitarea->CusArrive(uid, mode);   //修改排队号
             callnumToId[curUser->WaitNum] = curUser->id;
             curUser->mode = mode;
-            curUser-> ChargeCapacity = degree;
+            curUser->ChargeCapacity = degree;
             break;
+        }
         case 'B':
-            waitarea->StartPriority = 1;
+        {
+            if(degree == 0) //故障
+            {
+                //启动优先级调度
+                waitarea->StartPriority = 1;
+                bool mode = (userId[0] == 'T') ? true : false;
+                userId.remove(0, 1);
+                int errID = mode ? userId.toInt() : userId.toInt() + MAX_F_CPNUM;
+                prioritySchedule(errID, mode);
+            }
+            else //恢复
+            {
+                waitarea->StartPriority = 0;
+                /*
+                 * TODO
+                 * 若其它同类型充电桩中尚有车辆排队，则暂停等候区叫号服务
+                 * 将其它同类型充电桩中尚未充电的车辆合为一组，按照排队号码先后顺序重新调度
+                 * 调度完毕后，再重新开启等候区叫号服务。
+                 */
+            }
+
             break;
+        }
         case 'C':
+        {
+            // TODO:修改请求
+            userId.remove(0, 1);
+            int uid = userId.toInt();
+
+            if(userList[uid]->prog == WAIT) //允许在等候区修改
+            {
+                //修改请求充电量
+                if(mode == 'O')
+                {
+                    userList[uid]->ChargeCapacity = degree;
+                    userList[uid]->updateRequest(degree, userList[uid]->mode);
+                }
+                //修改充电模式
+                else
+                {
+                    userList[uid]->mode = (mode == 'F') ? true : false;
+
+                }
+            }
+            else //不允许在充电区修改
+            {
+                //取消充电
+                waitarea->delCus(uid, userList[uid]->mode);
+
+                //修改请求充电量
+                if(mode == 'O')
+                {
+                    userList[uid]->ChargeCapacity = degree;
+                    waitarea->CusArrive(uid, userList[uid]->mode);
+                }
+                //修改充电模式
+                else
+                {
+                    userList[uid]->mode = (mode == 'F') ? true : false;
+                    waitarea->CusArrive(uid, userList[uid]->mode);
+                }
+            }
             break;
+        }
         default:
+        {
             break;
+        }
     }
 }
 
