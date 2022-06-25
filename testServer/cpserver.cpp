@@ -6,6 +6,7 @@
 #include <QIODevice>
 #include <QTextCodec>
 #include <QByteArray>
+#include <Windows.h>
 
 QVector<User> aCustomer;
 
@@ -20,6 +21,11 @@ CPServer::CPServer(QWidget *parent)
     FCallNum = 1;
     TCallNum = 1;
     getEvent();
+
+//    CoInitializeEx(NULL, COINIT_MULTITHREADED);
+//    queueExcel.newExcel("try.xlsx");
+//    queueExcel.setCellValue(1, 1, "111");
+//    queueExcel.saveExcel("try.xlsx");
 
     //系统时间更新
     //systimer = new SysTimer();

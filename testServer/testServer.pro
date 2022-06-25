@@ -26,6 +26,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG += c++11
+CONFIG += qaxcontainer
 
 SOURCES += \
     bill.cpp \
@@ -37,6 +38,7 @@ SOURCES += \
     tcpserver.cpp \
     tcpsocket.cpp \
     connectsql.cpp \
+    testqueue.cpp \
     user.cpp \
     waitarea.cpp
 
@@ -50,6 +52,7 @@ HEADERS += \
     tcpserver.h \
     head.h \
     connectsql.h \
+    testqueue.h \
     user.h \
     waitarea.h
 

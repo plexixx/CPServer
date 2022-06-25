@@ -17,6 +17,8 @@
 #include <user.h>
 #include <QFile>
 
+//#include "qexcelexport.h"
+
 #pragma execution_character_set("utf-8")
 
 QT_BEGIN_NAMESPACE
@@ -44,6 +46,8 @@ private:
     //QMap<int, Report>CPToReport;    //充电桩到报表的映射
 
     QTime* systime; // 系统时间
+
+    //QExcelExport queueExcel;
 
     bool FCallNum;
     bool TCallNum;
