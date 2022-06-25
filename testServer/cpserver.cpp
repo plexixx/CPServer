@@ -22,7 +22,7 @@ CPServer::CPServer(QWidget *parent)
 
     //系统时间更新
     //systimer = new SysTimer();
-    timer = new QTimer; //创建定时器
+    timer = new QTimer(); //创建定时器
     systime = new QTime(6,00); // 6:00:00，启动后进入到5点55，
     connect(timer, SIGNAL(timeout()), this, SLOT(addSecs()));
     //连接槽函数，将timer的timeout行为，连接到updateTime函数中
@@ -388,7 +388,7 @@ void CPServer::EventCome(QString ch, QString userId, QString mode, float degree)
 void CPServer::addSecs()
 {
     // 空着就行
-    systime->addSecs(60); //每过去1分钟，进行状态的刷新
+    *systime = systime->addSecs(60); //每过去1分钟，进行状态的刷新
 }
 
 
