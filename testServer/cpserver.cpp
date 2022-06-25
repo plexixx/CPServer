@@ -64,6 +64,12 @@ void CPServer::updateTimeDeal()
                 // 详单
                 Bill bill;
                 bill.createBill(i, systime->hour(), systime->minute());
+                allBill.push_back(bill);
+                allBill.end()->id = allBill.size()-1;   //设置详单编号
+                CPtoBill[i] = allBill.end()->id;
+                //报表
+
+
             }
         }
     }

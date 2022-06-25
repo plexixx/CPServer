@@ -20,7 +20,7 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-inline QVector<User> aCustomer;
+extern QVector<User> aCustomer;
 
 //负责整个系统的运行
 class CPServer : public QObject
@@ -36,6 +36,8 @@ private:
     QVector<Report> report;      //每个充电桩有一个报表
     WaitArea* waitarea;
     User* curUser;
+    QVector<Bill> allBill;      //
+    QMap<int, int>CPtoBill;
 
     QTime* systime; // 系统时间
 
