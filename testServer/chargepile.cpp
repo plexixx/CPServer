@@ -4,6 +4,7 @@ ChargePile::ChargePile()
 {
     ChargeId = 0;            //为0表示还没有开启
     state = CP_FREE;
+
     //connect()
 }
 
@@ -47,6 +48,8 @@ void ChargePile::turnOff(int id, int type)
         return ;
     CurTotalNum++;  //从启动开始，累计充电次数+1
     DayTotalNum++;  //今天的累计充电次数+1
+    ChargDu = 0;
+    ChargTime = 0;
     state = CP_POWERING;
  }
 
@@ -59,12 +62,14 @@ void ChargePile::turnOff(int id, int type)
     DayTotalTime += CPUPDATEPEIROD;
     DayTotalPower += CPUPDATEPEIROD * rate;
 
+    ChargDu += CPUPDATEPEIROD * rate;
+    ChargTime += CPUPDATEPEIROD;
+
     if(SurplusPowtime <= 0) //充电完成
     {
         //timer.stop();   //停止计时
         SurplusPowtime = 0;
         state = CP_FREE;    //结束充电状态
-
     }
  }
 

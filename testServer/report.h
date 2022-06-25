@@ -3,6 +3,8 @@
 
 //#include <systimer.h>
 #include <QString>
+#include <chargepile.h>
+#include <bill.h>
 
 //报表
 class Report
@@ -20,13 +22,11 @@ public:
     float TotalServeFare;  //累计服务费用
     float TotalFare;       //累计总费用
 public:
-    Report(QString timeStr);
+    Report(QString timeStr, ChargePile CP, Bill bill);
     Report();
 //    void GetFromDb(db& database);
     //充电桩每完成一次充电就更新对应的报表，这里的输入是通过充电桩和报表传过来
-    void UpdateReport(int DayTotalNum, int DayTotalTime,
-                float DayTotalPower, float ChargeFare,
-                float ServeFare);
+    void UpdateReport(ChargePile CP, Bill bill);
     void NewDayUpdateReport(int mon, int week, int day);    //新的一天到来，报表需要更新
 
 };

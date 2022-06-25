@@ -17,11 +17,16 @@ CPServer::CPServer(QWidget *parent)
     //系统时间更新
     //systimer = new SysTimer();
     timer = new QTimer; //创建定时器
-    systime = new QTime(5,55); // 6:00:00，启动后进入到5点55，之后每5分钟刷新一次
-
+    systime = new QTime(5,55); // 6:00:00，启动后进入到5点55，
     connect(timer, SIGNAL(timeout()), this, SLOT(addSecs()));
     //连接槽函数，将timer的timeout行为，连接到updateTime函数中
     connect(timer, SIGNAL(timeout()), this, SLOT(updateTimeDeal()));
+
+    //开启所有的充电桩
+    for (int i=1; i<=MAX_F_CPNUM; i++)
+        CP[i].turnOn(i, F_MODE);
+    for (int i=MAX_F_CPNUM+1; i<=MAX_T_CPNUM + MAX_F_CPNUM; i++)
+        CP[i].turnOn(i, T_MODE);
 
     timer->start(MS_PER_MIN);
 
@@ -59,7 +64,7 @@ void CPServer::updateTimeDeal()
             {
                 haveCPFree = 1;
             }
-            else
+            else    //有人排队，则可以开始工作
             {
                 //充电桩队列里有人排队，则可以开始充电
                 //充电桩
@@ -67,14 +72,61 @@ void CPServer::updateTimeDeal()
                 CP[i].start(aCustomer[topUserId].CurPower);
                 // 详单
                 Bill bill;
-                bill.createBill(i, systime->hour(), systime->minute());
+                bill.createBill(i, systime->hour(), systime->minute(), F_MODE);
                 allBill.push_back(bill);
                 allBill.end()->id = allBill.size()-1;   //设置详单编号
                 CPtoBill[i] = allBill.end()->id;
                 //报表
-                Report newreport("6-16");
+//                Report newreport("6-16");
+//                CPToReport[i] = newreport;
 
+            }
+        }
+        else if (CP[i].state == CP_POWERING)    //充电桩处于充电状态
+        {
+            CP[i].OverPeriodUpdate();   //充电桩进行刷新
+            allBill[CPtoBill[i]].updateBill(systime->hour());   //详单进行刷新
+            if (CP[i].state == CP_FREE) //由充电状态转为空闲状态，说明充电结束
+            {
+                 allBill[CPtoBill[i]].finishBill(systime->hour(), systime->minute());
+                 report[i].UpdateReport(CP[i], allBill[CPtoBill[i]]);   //得到所有的报表
+            }
+        }
+    }
+    for (int i=MAX_F_CPNUM; i<=MAX_F_CPNUM + MAX_T_CPNUM; i++)  //遍历所有充电桩
+    {
+        if (CP[i].state == CP_FREE)   //充电桩处于空闲状态
+        {
+            if (CP[i].queue.size() == 0)  //该充电桩里没人排队
+            {
+                haveCPFree = 1;
+            }
+            else    //有人排队，则可以开始工作
+            {
+                //充电桩队列里有人排队，则可以开始充电
+                //充电桩
+                int topUserId = CP[i].queue[0];
+                CP[i].start(aCustomer[topUserId].CurPower);
+                // 详单
+                Bill bill;
+                bill.createBill(i, systime->hour(), systime->minute(), T_MODE);
+                allBill.push_back(bill);
+                allBill.end()->id = allBill.size()-1;   //设置详单编号
+                CPtoBill[i] = allBill.end()->id;
+                //报表
+//                Report newreport("6-16");
+//                CPToReport[i] = newreport;
 
+            }
+        }
+        else if (CP[i].state == CP_POWERING)    //充电桩处于充电状态
+        {
+            CP[i].OverPeriodUpdate();   //充电桩进行刷新
+            allBill[CPtoBill[i]].updateBill(systime->hour());   //详单进行刷新
+            if (CP[i].state == CP_FREE) //由充电状态转为空闲状态，说明充电结束
+            {
+                 allBill[CPtoBill[i]].finishBill(systime->hour(), systime->minute());
+                 report[i].UpdateReport(CP[i], allBill[CPtoBill[i]]);   //得到所有的报表
             }
         }
     }

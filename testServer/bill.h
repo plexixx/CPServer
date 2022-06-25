@@ -33,7 +33,7 @@ public:
 
 public:
     //收到充电桩的开始充电信号之后，就创造一个详单
-    void createBill(int chargeID,int hour, int min); //创造详单
+    void createBill(int chargeID,int hour, int min, int mode); //创造详单
     //收到充电桩完成一段时间的充电信号之后，就更新详单，输入当前所属时刻
     void updateBill(int hour);
     //收到充电桩结束充电的信号后，完成一次操作，详单生成
