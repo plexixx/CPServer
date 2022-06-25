@@ -810,7 +810,7 @@ void CPServer::saveBill(Bill bill)
         QTextStream out(&file);
         //in.setCodec(QTextCodec::codecForName("UTF-8"));
 
-        QString str = QString("%1,%2,%3,%4,%5,%6,%7,%8,%9,%10\n")
+        QString str = QString("%1,%2,%3,%4:%5,%6:%7,%8,%9,%10\n")
                 .arg(bill.uid)
                 .arg(bill.ChargeId)
                 .arg(bill.ChargeCapacity)
