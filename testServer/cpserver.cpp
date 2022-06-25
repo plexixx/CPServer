@@ -24,7 +24,7 @@ CPServer::CPServer(QWidget *parent)
     //系统时间更新
     //systimer = new SysTimer();
     timer = new QTimer(); //创建定时器
-    systime = new QTime(6,00); // 6:00:00，启动后进入到5点55，
+    systime = new QTime(5,55); // 6:00:00，启动后进入到5点55，
     connect(timer, SIGNAL(timeout()), this, SLOT(addSecs()));
     //连接槽函数，将timer的timeout行为，连接到updateTime函数中
     connect(timer, SIGNAL(timeout()), this, SLOT(updateTimeDeal()));
@@ -54,8 +54,14 @@ CPServer::CPServer(QWidget *parent)
     waitarea = new WaitArea();  //等候区
     curUser = new User();
 
+    QFile reportFile("../report.txt");  // 报表文件
+    QFile billFile("../bill.txt"); // 详单文件
 
-
+    // 删除旧文件
+    if(reportFile.exists())
+        reportFile.remove();
+    if(billFile.exists())
+        billFile.remove();
 }
 
 void CPServer::updateTimeDeal()
@@ -84,10 +90,11 @@ void CPServer::updateTimeDeal()
                 .arg(systime->minute()) << endl;
 
     emit signal_endpower();
-   // 考虑 等候区的状态
+    // 考虑等候区的状态
     //考虑叫号和调度进入充电区问题
     //考虑进入等候区的处理问题
     QVector<int> q;
+
     //先看一下需不需要叫号
     if (waitarea->CurParkNum > 0)
     {
@@ -151,7 +158,7 @@ void CPServer::updateTimeDeal()
                 CP[i].start(allUser[topUserId].CurPower);
                 // 详单
                 Bill bill;
-                bill.createBill(i, systime->hour(), systime->minute(), F_MODE);
+                bill.createBill(topUserId, i, systime->hour(), systime->minute(), F_MODE);
                 allBill.push_back(bill);
                 allBill.end()->id = allBill.size()-1;   //设置详单编号
                 CPtoBill[i] = allBill.end()->id;
@@ -181,7 +188,7 @@ void CPServer::updateTimeDeal()
             if (CP[i].queue.size() == 0)  //该充电桩里没人排队
             {
                qDebug() << QString("充电桩 %1 处于空闲状态且没人排队").arg(i) << endl;
-                haveCPFree = 1;
+               haveCPFree = 1;
             }
             else    //有人排队，则可以开始工作
             {
@@ -196,7 +203,7 @@ void CPServer::updateTimeDeal()
                          .arg(topUserId).arg(i).arg(allUser[topUserId].NeedChargeTime)<< endl;
                 // 详单
                 Bill bill;
-                bill.createBill(i, systime->hour(), systime->minute(), T_MODE);
+                bill.createBill(topUserId, i, systime->hour(), systime->minute(), T_MODE);
                 allBill.push_back(bill);
                 allBill.end()->id = allBill.size()-1;   //设置详单编号
                 CPtoBill[i] = allBill.end()->id;

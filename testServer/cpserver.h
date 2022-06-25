@@ -15,6 +15,7 @@
 #include <MacroDefine.h>
 #include <waitarea.h>
 #include <user.h>
+#include <QFile>
 
 #pragma execution_character_set("utf-8")
 
@@ -38,7 +39,7 @@ private:
     WaitArea* waitarea;
     User* curUser;
     QVector<Bill> allBill;      //
-    QMap<int, int>CPtoBill; //充电桩到详单的映射
+    QMap<int, int> CPtoBill; //充电桩到详单的映射
     QVector<User> allUser;  //所有的的用户
     //QMap<int, Report>CPToReport;    //充电桩到报表的映射
 
@@ -91,6 +92,9 @@ public:
     void GotoChargeArea(bool mode, int CPid, int userId);
 
     void getEvent();
+
+    void saveReport(); // 保存报表
+    void saveBill(); // 保存详单
 
 
 public slots:
