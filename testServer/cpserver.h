@@ -48,7 +48,7 @@ private:
 
 public:
     //处理事件
-    void EventCome(char ch, int userId, int mode, float degree);
+    void EventCome(char ch, QString userId, char mode, float degree);
 
     int sysSchedule(bool mode);  //系统调度
     int timeSchedule(int errID, bool mode); //时间顺序调度
@@ -58,6 +58,7 @@ public:
     bool TurnOnCP(int CPid, bool mode);     //打开编号为id的充电桩
     bool TurnOffCP(int CPid, bool mode);    //关闭编号为id的充电桩
     bool NewCusArrive(int chargeType, int chargeQuantity);  //新用户要进入等候区
+    void delCus(int CPid, bool mode, int userID); //从充电区删除用户
 
     CPServer(QWidget *parent = nullptr);
     ~CPServer();
@@ -80,7 +81,7 @@ public:
 
     void closeEvent(QCloseEvent* event);  // 关闭连接事件
 
-    void GotoChargArea(bool mode, int CPid, int userId);
+    void GotoChargeArea(bool mode, int CPid, int userId);
 
 
 public slots:
