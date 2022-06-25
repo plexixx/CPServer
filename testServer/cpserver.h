@@ -48,7 +48,7 @@ private:
 
 public:
     //处理事件
-    void EventCome(char ch, int userId, int mode, float degree);
+    void EventCome(char ch, QString userId, char mode, float degree);
 
     int sysSchedule(bool mode);  //系统调度
     int timeSchedule(int errID, bool mode); //时间顺序调度
