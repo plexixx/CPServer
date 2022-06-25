@@ -106,7 +106,7 @@ void CPServer::updateTimeDeal()
             CPid = sysSchedule(F_MODE);    //叫号后面就是调度
             qDebug() << QString("要放到充电桩%1去").arg(CPid) << endl;
             GotoChargeArea(F_MODE, CPid, userId);
-
+            allUser[userId].prog =CHARGEWAIT;
             qDebug() << QString("用户%1到达快充电桩%2")
                      .arg(userId).arg(CPid)<< endl;
         }
@@ -118,6 +118,7 @@ void CPServer::updateTimeDeal()
                 userId = waitarea->CallNum(T_MODE);
             CPid = sysSchedule(T_MODE);
             GotoChargeArea(T_MODE, CPid, userId);
+            allUser[userId].prog =CHARGEWAIT;
             qDebug() << QString("用户%1到达慢充电桩%2")
                      .arg(userId).arg(CPid)<< endl;
         }
@@ -148,7 +149,8 @@ void CPServer::updateTimeDeal()
                 //充电桩队列里有人排队，则可以开始充电
                 //充电桩
                 int topUserId = CP[i].queue[0];
-                CP[i].start(allUser[topUserId].CurPower);
+                allUser[topUserId].prog = CHARGEPOW;
+                CP[i].start(allUser[topUserId].NeedChargeTime);
                 // 详单
                 Bill bill;
                 bill.createBill(i, systime->hour(), systime->minute(), F_MODE);
@@ -167,8 +169,11 @@ void CPServer::updateTimeDeal()
             allBill[CPtoBill[i]].updateBill(systime->hour());   //详单进行刷新
             if (CP[i].state == CP_FREE) //由充电状态转为空闲状态，说明充电结束
             {
+                allUser[CP[i].queue[0]].prog = CHARGOK;
+                CP[i].queue.pop_front();
                  allBill[CPtoBill[i]].finishBill(systime->hour(), systime->minute());
                  report[i].UpdateReport(CP[i], allBill[CPtoBill[i]]);   //得到所有的报表
+
             }
         }
     }
@@ -240,32 +245,40 @@ void CPServer::EventCome(QString ch, QString userId, QString mode, float degree)
         userId.remove(0, 1);
         int uid = userId.toInt();
 
-        if (waitarea->CurParkNum >= MAX_PARK_NUM)
+        if (degree == 0)   //中止充电
         {
-            qDebug()<< "当前等候区车位已满，用户无法进入充电桩" << endl;
+
         }
+        else
+        {
+            if (waitarea->CurParkNum >= MAX_PARK_NUM)
+            {
+                qDebug()<< "当前等候区车位已满，用户无法进入充电桩" << endl;
+            }
 
-        //更改用户状态
-        qDebug() << QString("处理用户 %1 的到来信息").arg(userId) << endl;
-        allUser[uid].WaitNum = waitarea->CusArrive(uid, mode == "F" ? F_MODE : T_MODE);   //修改排队号
 
-        qDebug() << "1======cpserver========" << endl;
-        callnumToId[allUser[uid].WaitNum] = uid;
-        qDebug() << QString("用户 %1 对应等待号 %2 检测 %3").arg(uid).arg(allUser[uid].WaitNum)
-                    .arg(callnumToId[allUser[uid].WaitNum])
-                 << endl;
-        allUser[uid].mode = mode == "F" ? F_MODE : T_MODE;
-        qDebug() << "3=======cpserver=======" << endl;
-        allUser[uid].ChargeCapacity = degree;
-        qDebug() << "4========cpserver=======" << endl;
-        allUser[uid].prog = WAIT;
-        float v = (allUser[uid].mode == F_MODE ? F_RATE : T_RATE);
-        v /= 60;
-        qDebug() << QString("充电速率 %1").arg(v) << endl;
+            //更改用户状态
+            qDebug() << QString("处理用户 %1 的到来信息").arg(userId) << endl;
+            allUser[uid].WaitNum = waitarea->CusArrive(uid, mode == "F" ? F_MODE : T_MODE);   //修改排队号
 
-        allUser[uid].NeedChargeTime = degree / v;
-        qDebug() << QString("用户成功进入等候区， 需要时间 %1 min")
-                    .arg(allUser[uid].NeedChargeTime) << endl;
+            qDebug() << "1======cpserver========" << endl;
+            callnumToId[allUser[uid].WaitNum] = uid;
+            qDebug() << QString("用户 %1 对应等待号 %2 检测 %3").arg(uid).arg(allUser[uid].WaitNum)
+                        .arg(callnumToId[allUser[uid].WaitNum])
+                     << endl;
+            allUser[uid].mode = mode == "F" ? F_MODE : T_MODE;
+            qDebug() << "3=======cpserver=======" << endl;
+            allUser[uid].ChargeCapacity = degree;
+            qDebug() << "4========cpserver=======" << endl;
+            allUser[uid].prog = WAIT;
+            float v = (allUser[uid].mode == F_MODE ? F_RATE : T_RATE);
+            v /= 60;
+            qDebug() << QString("充电速率 %1").arg(v) << endl;
+
+            allUser[uid].NeedChargeTime = degree / v;
+            qDebug() << QString("用户成功进入等候区， 需要时间 %1 min")
+                        .arg(allUser[uid].NeedChargeTime) << endl;
+        }
     }
     else if (ch == "B")
     {
