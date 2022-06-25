@@ -137,10 +137,6 @@ int WaitArea::PriorityCallNum(bool mode)
 void WaitArea::startTimeSegCall(int errID, QVector<ChargePile>& q)
 {
     //先将所有需要重新调度的用户加入队列
-    for(int i = 0; i < q.size(); i++)
-    {
-
-    }
 //    for(int i=0; i<errCP.queue.size(); i++)
 //    {
 //        CusQueue.push_back(aCustomer[errCP.queue[i]]);

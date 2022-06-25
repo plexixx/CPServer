@@ -51,8 +51,8 @@ CPServer::CPServer(QWidget *parent)
 
 
     tcp_server = new QTcpServer;
-    tcp_server->listen(QHostAddress::LocalHost, 6666);
-    qDebug()<<("start listen to port 6666 of local host!") << endl;
+    //tcp_server->listen(QHostAddress::LocalHost, 6666);
+    //qDebug()<<("start listen to port 6666 of local host!") << endl;
    // connect(tcp_server, SIGNAL(newConnection()), this, SLOT(onNewConnection()), Qt::QueuedConnection);
 
     //管理员
