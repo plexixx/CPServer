@@ -92,33 +92,33 @@ void CPServer::updateTimeDeal()
     if (waitarea->CurParkNum > 0)
     {
         qDebug() << "有人在等候区，需叫号" << endl;
-        int calledNum;  //被叫的号
+        int userId;  //被叫的用户
         int CPid;   //调度确定的充电桩
         if (FCallNum == 1 && waitarea->FQueue.size() > waitarea->it_F)
         {
             if (waitarea->StartPriority == 1)
             {
-                calledNum = waitarea->PriorityCallNum(F_MODE);
+                userId = waitarea->PriorityCallNum(F_MODE);
             }
             else
-                calledNum = waitarea->CallNum(F_MODE);
+                userId = waitarea->CallNum(F_MODE);
             CPid = sysSchedule(F_MODE);    //叫号后面就是调度
 
-            GotoChargeArea(F_MODE, CPid, callnumToId[calledNum]);
+            GotoChargeArea(F_MODE, CPid, userId);
 
-            qDebug() << QString("用户%1到达快充电桩%2，排队号为%3")
-                     .arg(callnumToId[calledNum]).arg(CPid).arg(calledNum)<< endl;
+            qDebug() << QString("用户%1到达快充电桩%2")
+                     .arg(userId).arg(CPid)<< endl;
         }
         if (TCallNum == 1 && waitarea->TQueue.size()  > waitarea->it_T)
         {
             if (waitarea->StartPriority == 1)
-                calledNum = waitarea->PriorityCallNum(T_MODE);
+                userId = waitarea->PriorityCallNum(T_MODE);
             else
-                calledNum = waitarea->CallNum(T_MODE);
+                userId = waitarea->CallNum(T_MODE);
             CPid = sysSchedule(T_MODE);
-            GotoChargeArea(T_MODE, CPid, callnumToId[calledNum]);
-            qDebug() << QString("用户%1到达慢充电桩%2，排队号为%3")
-                     .arg(callnumToId[calledNum]).arg(CPid).arg(calledNum)<< endl;
+            GotoChargeArea(T_MODE, CPid, userId);
+            qDebug() << QString("用户%1到达慢充电桩%2")
+                     .arg(userId).arg(CPid)<< endl;
         }
     }
     else{
@@ -147,7 +147,7 @@ void CPServer::updateTimeDeal()
                 //充电桩队列里有人排队，则可以开始充电
                 //充电桩
                 int topUserId = CP[i].queue[0];
-                CP[i].start(aCustomer[topUserId].CurPower);
+                CP[i].start(allUser[topUserId].CurPower);
                 // 详单
                 Bill bill;
                 bill.createBill(i, systime->hour(), systime->minute(), F_MODE);
