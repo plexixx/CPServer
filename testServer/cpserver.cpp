@@ -185,7 +185,7 @@ void CPServer::updateTimeDeal()
                 CP[i].start(allUser[topUserId].NeedChargeTime);
                 // 详单
                 Bill bill;
-                bill.createBill(i, systime->hour(), systime->minute(), F_MODE);
+                bill.createBill(topUserId,i, systime->hour(), systime->minute(), F_MODE);
                 allBill.push_back(bill);
                 allBill.end()->id = allBill.size()-1;   //设置详单编号
                 CPtoBill[i] = allBill.end()->id;
@@ -233,7 +233,7 @@ void CPServer::updateTimeDeal()
                          .arg(topUserId).arg(i).arg(allUser[topUserId].NeedChargeTime)<< endl;
                 // 详单
                 Bill bill;
-                bill.createBill(i, systime->hour(), systime->minute(), T_MODE);
+                bill.createBill(topUserId, i, systime->hour(), systime->minute(), T_MODE);
                 allBill.push_back(bill);
                 allBill.end()->id = allBill.size()-1;   //设置详单编号
                 CPtoBill[i] = allBill.end()->id;
@@ -256,6 +256,8 @@ void CPServer::updateTimeDeal()
             qDebug() << QString("havepower====%1=========").arg(allUser[CP[i].queue[0]].havePower);
             if (CP[i].state == CP_FREE) //由充电状态转为空闲状态，说明充电结束
             {
+                allUser[CP[i].queue[0]].prog = CHARGOK;
+                CP[i].queue.pop_front();
                  allBill[CPtoBill[i]].finishBill(systime->hour(), systime->minute());
                  report[i].UpdateReport(CP[i], allBill[CPtoBill[i]]);   //得到所有的报表
             }
@@ -297,7 +299,7 @@ void CPServer::testQueue()
 //    {
         for (int i=0; i<CP[1].queue.size(); i++)
         {
-            qDebug() << "充电桩1"
+            qDebug() << "充电桩1";
             QString str = "(V";
             int userId = CP[1].queue[i];
             str += QString::number(userId) + ",";
