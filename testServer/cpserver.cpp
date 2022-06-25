@@ -156,7 +156,7 @@ void CPServer::updateTimeDeal()
             else
                 calledNum = waitarea->CallNum(F_MODE);
             CPid = sysSchedule(F_MODE);    //叫号后面就是调度
-            GotoChargArea(F_MODE, CPid, callnumToId[calledNum]);
+            GotoChargeArea(F_MODE, CPid, callnumToId[calledNum]);
         }
         if (TCallNum == 1)
         {
@@ -225,7 +225,7 @@ void CPServer::EventCome(char ch, QString userId, char mode, float degree)
         }
         case 'C':
         {
-            // TODO:修改请求
+            // 修改请求
             userId.remove(0, 1);
             int uid = userId.toInt();
 
@@ -247,7 +247,7 @@ void CPServer::EventCome(char ch, QString userId, char mode, float degree)
             else //不允许在充电区修改
             {
                 //取消充电
-                waitarea->delCus(uid, userList[uid]->mode);
+                delCus(userList[uid]->CPid, userList[uid]->mode, uid);
 
                 //修改请求充电量
                 if(mode == 'O')
@@ -458,7 +458,17 @@ bool CPServer::NewCusArrive(int chargeType, int chargeQuantity)
     return true;
 }
 
-void CPServer::GotoChargArea(bool mode, int CPid, int userId)
+void CPServer::delCus(int CPid, bool mode, int userID)
+{
+    for(int i = 0; i < CP[CPid].queue.size(); i++)
+    {
+        if(CP[CPid].queue[i] == userID)
+            CP[CPid].queue[i] = -1;
+    }
+}
+
+
+void CPServer::GotoChargeArea(bool mode, int CPid, int userId)
 {
     if (mode == F_MODE)
     {

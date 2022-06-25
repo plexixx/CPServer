@@ -22,6 +22,11 @@ int WaitArea::CusArrive(int cusId, int askType)
     }
 }
 
+void WaitArea::delCus(int cusId, int askType)
+{
+
+}
+
 int WaitArea::CallNum(int askType)
 {
     if (askType == F_MODE && it_F < FQueue.size())
