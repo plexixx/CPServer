@@ -8,8 +8,7 @@ WaitArea::WaitArea()
 
 int WaitArea::CusArrive(int cusId, int askType)
 {
-
-
+   CurParkNum ++;
     if (askType == F_MODE)
     {
         FQueue.push_back(cusId);
@@ -25,14 +24,17 @@ int WaitArea::CusArrive(int cusId, int askType)
 
 int WaitArea::CallNum(int askType)
 {
+
     if (askType == F_MODE && it_F < FQueue.size())
     {
         int num = FQueue[it_F++];    //取出第一个号
+        CurParkNum--;   //叫号叫走了当然空出车位了
         return  num;            //返回被叫号的号码
     }
     else if (askType == T_MODE && it_T < TQueue.size())
     {
         int num = TQueue[it_T++];    //取出第一个号
+        CurParkNum--;   //叫号叫走了当然空出车位了
         return  num;            //返回被叫号的号码
     }
     return 0;
@@ -75,6 +77,7 @@ int WaitArea::PriorityCallNum(bool mode)
         }
 
         int num = E_FQueue[it_EF++];    //取出第一个号
+
         return num;
     }
     else
@@ -88,8 +91,13 @@ int WaitArea::PriorityCallNum(bool mode)
         }
 
         int num = E_TQueue[it_ET++];    //取出第一个号
+
         return num;
     }
+
+    //如果故障队列都调度完毕，则开启普通调度
+    StartPriority = 0;
+    return CallNum(mode);
 
 //    if (mode && it_EF < E_FQueue.size()) // 快充
 //    {
@@ -101,8 +109,7 @@ int WaitArea::PriorityCallNum(bool mode)
 //        int num = E_TQueue[it_ET++];    //取出第一个号
 //        return  num;            //返回被叫号的号码
 //    }
-//    //如果故障队列都调度完毕，则开启普通调度
-//    return CallNum(errType);
+
 }
 
 void WaitArea::startTimeSegCall(int errID, QVector<ChargePile>& q)
@@ -164,6 +171,7 @@ void WaitArea::M_CallNum(int Fnum, int Tnum, QVector<int>&Fcus, QVector<int>&Tcu
 
 void WaitArea::ReGenerateNum(int id, int oldType)
 {
+    CurParkNum--;
     //从原来队列中删除
     int it;
     if (oldType == F_MODE)

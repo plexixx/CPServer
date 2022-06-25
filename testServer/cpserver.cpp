@@ -55,7 +55,45 @@ void CPServer::updateTimeDeal()
 {
     qDebug() << QString("%1:%2 进行状态更新").arg(systime->hour())
                 .arg(systime->minute()) << endl;
-        //1、 先考虑充电桩的状态，以及详单和报表的更新
+
+    emit signal_endpower();
+   // 考虑 等候区的状态
+    //考虑叫号和调度进入充电区问题
+    //考虑进入等候区的处理问题
+    QVector<int> q;
+    //先看一下需不需要叫号
+    if (waitarea->CurParkNum > 0)
+    {
+        qDebug() << "有人在等候区，需叫号" << endl;
+        int calledNum;  //被叫的号
+        int CPid;   //调度确定的充电桩
+        if (FCallNum == 1)
+        {
+            if (waitarea->StartPriority == 1)
+            {
+                calledNum = waitarea->PriorityCallNum(F_MODE);
+            }
+            else
+                calledNum = waitarea->CallNum(F_MODE);
+            CPid = sysSchedule(F_MODE);    //叫号后面就是调度
+            GotoChargeArea(F_MODE, CPid, callnumToId[calledNum]);
+        }
+        if (TCallNum == 1)
+        {
+            if (waitarea->StartPriority == 1)
+                calledNum = waitarea->PriorityCallNum(T_MODE);
+
+            else
+                calledNum = waitarea->CallNum(T_MODE);
+            CPid = sysSchedule(T_MODE);
+        }
+    }
+    else{
+        qDebug() << "没有人在等候区，无需叫号" << endl;
+    }
+
+
+        //考虑充电桩的状态，以及详单和报表的更新
 //        emit signal_startpower();
     bool haveCPFree = 0;    //有充电桩空闲
     for (int i=1; i<=MAX_F_CPNUM; i++)  //遍历所有充电桩
@@ -145,37 +183,7 @@ void CPServer::updateTimeDeal()
         }
     }
     FCallNum = haveCPFree;
-//        emit signal_endpower();
-        //2、再考虑 等候区的状态
 
-        //3、再考虑叫号和调度进入充电区问题
-
-        //4、再考虑进入等候区的处理问题
-//        QVector<int> q;
-//        //先看一下可不可以叫号
-//        int calledNum;  //被叫的号
-//        int CPid;   //调度确定的充电桩
-//        if (FCallNum == 1)
-//        {
-//            if (waitarea->StartPriority == 1)
-//            {
-//                calledNum = waitarea->PriorityCallNum(F_MODE);
-//            }
-
-//            else
-//                calledNum = waitarea->CallNum(F_MODE);
-//            CPid = sysSchedule(F_MODE);    //叫号后面就是调度
-//            GotoChargeArea(F_MODE, CPid, callnumToId[calledNum]);
-//        }
-//        if (TCallNum == 1)
-//        {
-//            if (waitarea->StartPriority == 1)
-//                calledNum = waitarea->PriorityCallNum(T_MODE);
-
-//            else
-//                calledNum = waitarea->CallNum(T_MODE);
-//            CPid = sysSchedule(T_MODE);
-//        }
 
 
 }
@@ -206,6 +214,7 @@ void CPServer::EventCome(char ch, QString userId, char mode, float degree)
             callnumToId[curUser->WaitNum] = curUser->id;
             curUser->mode = mode;
             curUser->ChargeCapacity = degree;
+            curUser->prog = WAIT;
             break;
         }
         case 'B':
@@ -479,14 +488,8 @@ void CPServer::delCus(int CPid, bool mode, int userID)
 
 void CPServer::GotoChargeArea(bool mode, int CPid, int userId)
 {
-    if (mode == F_MODE)
-    {
         CP[CPid].queue.push_back(userId);
-    }
-    else
-    {
-        CP[CPid].queue.push_back(userId);
-    }
+
 }
 
 
