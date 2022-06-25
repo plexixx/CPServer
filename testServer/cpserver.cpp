@@ -211,6 +211,7 @@ void CPServer::updateTimeDeal()
         {
             CP[i].OverPeriodUpdate();   //充电桩进行刷新
             allBill[CPtoBill[i]].updateBill(systime->hour());   //详单进行刷新
+            allUser[CP[i].queue[0]].NeedChargeTime -= CPUPDATEPEIROD;
             if (CP[i].state == CP_FREE) //由充电状态转为空闲状态，说明充电结束
             {
                  allBill[CPtoBill[i]].finishBill(systime->hour(), systime->minute());
