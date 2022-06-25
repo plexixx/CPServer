@@ -52,7 +52,7 @@ CPServer::CPServer(QWidget *parent)
 
 void CPServer::updateTimeDeal()
 {
-    qDebug() << "进行状态更新" << endl;
+    qDebug() << QString("%1:%2 进行状态更新").arg(systime->hour(), systime->minute()) << endl;
         //1、 先考虑充电桩的状态，以及详单和报表的更新
 //        emit signal_startpower();
     bool haveCPFree = 0;    //有充电桩空闲
@@ -60,12 +60,14 @@ void CPServer::updateTimeDeal()
     {
         if (CP[i].state == CP_FREE)   //充电桩处于空闲状态
         {
+             qDebug() << QString("充电桩 %1 处于空闲状态且没人排队").arg(i) << endl;
             if (CP[i].queue.size() == 0)  //该充电桩里没人排队
             {
                 haveCPFree = 1;
             }
             else    //有人排队，则可以开始工作
             {
+                qDebug() << QString("充电桩 %1 处于空闲状态但有人排队").arg(i) << endl;
                 //充电桩队列里有人排队，则可以开始充电
                 //充电桩
                 int topUserId = CP[i].queue[0];
@@ -99,10 +101,12 @@ void CPServer::updateTimeDeal()
         {
             if (CP[i].queue.size() == 0)  //该充电桩里没人排队
             {
+               qDebug() << QString("充电桩 %1 处于空闲状态且没人排队").arg(i) << endl;
                 haveCPFree = 1;
             }
             else    //有人排队，则可以开始工作
             {
+                qDebug() << QString("充电桩 %1 处于空闲状态但有人排队").arg(i) << endl;
                 //充电桩队列里有人排队，则可以开始充电
                 //充电桩
                 int topUserId = CP[i].queue[0];
@@ -116,6 +120,7 @@ void CPServer::updateTimeDeal()
                 //报表
 //                Report newreport("6-16");
 //                CPToReport[i] = newreport;
+                //用户
 
             }
         }
