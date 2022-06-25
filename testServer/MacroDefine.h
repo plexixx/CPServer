@@ -36,5 +36,5 @@
 #define USUAL_UNIT_PRICE    0.7
 #define VALLEY_UNIT_PRICE 0.4
 
-
+#define MAX_USER_NUM 30
 #endif // MACRODEFINE_H

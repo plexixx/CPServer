@@ -14,6 +14,7 @@ CPServer::CPServer(QWidget *parent)
     , ui(new Ui::MainWindow)
     , CP(MAX_F_CPNUM + MAX_T_CPNUM +2)
     , report(MAX_F_CPNUM + MAX_T_CPNUM +2)
+    , allUser (MAX_USER_NUM + 1)
 {
     db = new DB();
     FCallNum = 1;
@@ -222,13 +223,12 @@ CPServer::~CPServer()
 //处理事件
 void CPServer::EventCome(QString ch, QString userId, QString mode, float degree)
 {
-    User* curUser;
 
     if (ch == "A")
     {
         userId.remove(0, 1);
         int uid = userId.toInt();
-        curUser = userList[uid];
+
         if (waitarea->CurParkNum >= MAX_PARK_NUM)
         {
             qDebug()<< "当前等候区车位已满，用户无法进入充电桩" << endl;
@@ -236,11 +236,16 @@ void CPServer::EventCome(QString ch, QString userId, QString mode, float degree)
 
         //更改用户状态
         qDebug() << QString("处理用户 %1 的到来信息").arg(userId) << endl;
-        curUser->WaitNum = waitarea->CusArrive(uid, mode.toInt());   //修改排队号
-        callnumToId[curUser->WaitNum] = curUser->id;
-        curUser->mode = mode.toInt();
-        curUser->ChargeCapacity = degree;
-        curUser->prog = WAIT;
+        allUser[uid].WaitNum = waitarea->CusArrive(uid, mode == "F" ? F_MODE : T_MODE);   //修改排队号
+        qDebug() << "1======cpserver========" << endl;
+        callnumToId[allUser[uid].WaitNum] = allUser[uid].id;
+        qDebug() << "2======cpserver========" << endl;
+        allUser[uid].mode = mode.toInt();
+        qDebug() << "3=======cpserver=======" << endl;
+        allUser[uid].ChargeCapacity = degree;
+        qDebug() << "4========cpserver=======" << endl;
+        allUser[uid].prog = WAIT;
+        qDebug() << QString("用户成功进入等候区") << endl;
     }
     else if (ch == "B")
     {
@@ -272,37 +277,37 @@ void CPServer::EventCome(QString ch, QString userId, QString mode, float degree)
         userId.remove(0, 1);
         int uid = userId.toInt();
 
-        if(userList[uid]->prog == WAIT) //允许在等候区修改
+        if(allUser[uid].prog == WAIT) //允许在等候区修改
         {
             //修改请求充电量
             if(mode == 'O')
             {
-                userList[uid]->ChargeCapacity = degree;
-                userList[uid]->updateRequest(degree, userList[uid]->mode);
+                allUser[uid].ChargeCapacity = degree;
+                allUser[uid].updateRequest(degree, allUser[uid].mode);
             }
             //修改充电模式
             else
             {
-                userList[uid]->mode = (mode == 'F') ? true : false;
+                allUser[uid].mode = (mode == 'F') ? true : false;
 
             }
         }
         else //不允许在充电区修改
         {
             //取消充电
-            delCus(userList[uid]->CPid, userList[uid]->mode, uid);
+            delCus(allUser[uid].CPid, allUser[uid].mode, uid);
 
             //修改请求充电量
             if(mode == 'O')
             {
-                userList[uid]->ChargeCapacity = degree;
-                waitarea->CusArrive(uid, userList[uid]->mode);
+                allUser[uid].ChargeCapacity = degree;
+                waitarea->CusArrive(uid, allUser[uid].mode);
             }
             //修改充电模式
             else
             {
-                userList[uid]->mode = (mode == 'F') ? true : false;
-                waitarea->CusArrive(uid, userList[uid]->mode);
+                allUser[uid].mode = (mode == 'F') ? true : false;
+                waitarea->CusArrive(uid, allUser[uid].mode);
             }
         }
     }
@@ -416,7 +421,7 @@ bool CPServer::getLoginResult(QString name, QString pswd)
     if(user == nullptr)
         return false;
     curUser = user;
-    userList.insert(user->id, user);
+    //userList.insert(user->id, user);
     return true;
 }
 
@@ -700,7 +705,7 @@ int CPServer::timeSchedule(int errID, bool mode)
             for(int j = 1; j < CP[i].queue.size(); j++)
             {
                 int uid = CP[i].queue[j];
-                map.insert(userList[uid]->WaitNum, uid);
+                //map.insert(userList[uid]->WaitNum, uid);
             }
             CP[i].queue.clear();
         }
@@ -713,7 +718,7 @@ int CPServer::timeSchedule(int errID, bool mode)
             for(int j = 1; j < CP[i].queue.size(); j++)
             {
                 int uid = CP[i].queue[j];
-                map.insert(userList[uid]->WaitNum, uid);
+                //map.insert(userList[uid]->WaitNum, uid);
             }
             CP[i].queue.clear();
         }

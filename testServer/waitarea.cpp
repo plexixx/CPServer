@@ -1,4 +1,5 @@
 ﻿#include "waitarea.h"
+#include <QDebug>
 
 WaitArea::WaitArea()
 {
@@ -8,15 +9,20 @@ WaitArea::WaitArea()
 
 int WaitArea::CusArrive(int cusId, int askType)
 {
+   qDebug() << QString("CusArrive %1 %2").arg(cusId).arg(askType) << endl;
    CurParkNum ++;
     if (askType == F_MODE)
     {
+        qDebug() << QString("1==============") << endl;
         FQueue.push_back(cusId);
+        qDebug() << QString("2==============") << endl;
         return  FQueue.size();
     }
     else
     {
+        qDebug() << QString("3==============") << endl;
         TQueue.push_back(cusId);
+        qDebug() << QString("4==============") << endl;
         return TQueue.size();
     }
 }

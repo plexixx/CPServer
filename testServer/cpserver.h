@@ -37,6 +37,7 @@ private:
     User* curUser;
     QVector<Bill> allBill;      //
     QMap<int, int>CPtoBill; //充电桩到详单的映射
+    QVector<User> allUser;  //所有的的用户
     //QMap<int, Report>CPToReport;    //充电桩到报表的映射
 
     QTime* systime; // 系统时间
@@ -66,7 +67,7 @@ public:
     ~CPServer();
 
     DB* db;                                 //数据库
-    QMap<int, User*> userList;              //已登录用户表
+    //QMap<int, User*> userList;              //已登录用户表
     QMap<int, int> callnumToId;              //排队号码到用户id的映射
 
     bool getLoginResult(QString, QString);  // 获取登录状态
