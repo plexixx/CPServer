@@ -73,7 +73,7 @@ CPServer::CPServer(QWidget *parent)
 
     tcp_server = new QTcpServer;
     tcp_server->listen(QHostAddress::LocalHost, 6666);
-    qDebug()<<("start listen to port 6666 of local host!") << endl;
+    //qDebug()<<("start listen to port 6666 of local host!") << endl;
    // connect(tcp_server, SIGNAL(newConnection()), this, SLOT(onNewConnection()), Qt::QueuedConnection);
 
     //管理员
@@ -94,10 +94,10 @@ void CPServer::updateTimeDeal()
 
         QString tmpTimeStr = QString("%1:%2:00").arg(systime->hour())
                 .arg(systime->minute());
-        qDebug() << QString("%1 进行事件的判断").arg(tmpTimeStr) << endl;
+        //qDebug() << QString("%1 进行事件的判断").arg(tmpTimeStr) << endl;
         if (TimetoEvent[tmpTimeStr].isEmpty() == 0)
         {
-            qDebug() << "匹配到事件" << endl;
+            //qDebug() << "匹配到事件" << endl;
             QString eventStr = TimetoEvent[tmpTimeStr];
             QString type = eventStr.section(',', 0, 0);
             QString id = eventStr.section(',', 1, 1);
@@ -108,8 +108,8 @@ void CPServer::updateTimeDeal()
         }
     }
 
-    qDebug() << QString("%1:%2 进行状态更新").arg(systime->hour())
-                .arg(systime->minute()) << endl;
+    //qDebug() << QString("%1:%2 进行状态更新").arg(systime->hour())
+//                .arg(systime->minute()) << endl;
 
     //emit signal_endpower();
    // 考虑 等候区的状态
@@ -124,7 +124,7 @@ void CPServer::updateTimeDeal()
         int CPid;   //调度确定的充电桩
         if (FCallNum == 1 && waitarea->FQueue.size() > waitarea->it_F)
         {
-            qDebug() << "快充队列有空位，可叫号" << endl;
+//            qDebug() << "快充队列有空位，可叫号" << endl;
             if (waitarea->StartPriority == 1)
             {
                 userId = waitarea->PriorityCallNum(F_MODE);
@@ -132,13 +132,13 @@ void CPServer::updateTimeDeal()
             else
                 userId = waitarea->CallNum(F_MODE);
 
-                qDebug() << QString("叫完号了===%1======").arg(userId) << endl;
+//                qDebug() << QString("叫完号了===%1======").arg(userId) << endl;
                 CPid = sysSchedule(F_MODE);    //叫号后面就是调度
-                qDebug() << QString("要放到充电桩%1去").arg(CPid) << endl;
+//                qDebug() << QString("要放到充电桩%1去").arg(CPid) << endl;
                 GotoChargeArea(F_MODE, CPid, userId);
                 allUser[userId].prog =CHARGEWAIT;
-                qDebug() << QString("用户%1到达快充电桩%2")
-                         .arg(userId).arg(CPid)<< endl;
+//                qDebug() << QString("用户%1到达快充电桩%2")
+//                         .arg(userId).arg(CPid)<< endl;
 
         }
         if (TCallNum == 1 && waitarea->TQueue.size()  > waitarea->it_T)
@@ -151,12 +151,12 @@ void CPServer::updateTimeDeal()
             GotoChargeArea(T_MODE, CPid, userId);
             allUser[userId].prog =CHARGEWAIT;
             allUser[userId].CPid = CPid;
-            qDebug() << QString("用户%1到达慢充电桩%2")
-                     .arg(userId).arg(CPid)<< endl;
+//            qDebug() << QString("用户%1到达慢充电桩%2")
+//                     .arg(userId).arg(CPid)<< endl;
         }
     }
     else{
-        qDebug() << "没有人在等候区，无需叫号" << endl;
+//        qDebug() << "没有人在等候区，无需叫号" << endl;
     }
 
 
@@ -170,14 +170,14 @@ void CPServer::updateTimeDeal()
 
             if (CP[i].queue.size() == 0)  //该充电桩里没人排队
             {
-                qDebug() << QString("充电桩 %1 处于空闲状态且没人排队").arg(i) << endl;
+//                qDebug() << QString("充电桩 %1 处于空闲状态且没人排队").arg(i) << endl;
                 haveCPFree = 1;
             }
             else    //有人排队，则可以开始工作
             {
                 if (CP[i].queue.size() < MAX_CHARGE_QUEUE_LEN)
                     haveCPFree = 1; //还有空位
-                qDebug() << QString("充电桩 %1 处于空闲状态但有人排队").arg(i) << endl;
+//                qDebug() << QString("充电桩 %1 处于空闲状态但有人排队").arg(i) << endl;
                 //充电桩队列里有人排队，则可以开始充电
                 //充电桩
                 int topUserId = CP[i].queue[0];
@@ -186,9 +186,11 @@ void CPServer::updateTimeDeal()
                 // 详单
                 Bill bill;
                 bill.createBill(topUserId,i, systime->hour(), systime->minute(), F_MODE);
+                qDebug() << "加入前帐单数为" << allBill.size() << endl;
                 allBill.push_back(bill);
-                allBill.end()->id = allBill.size()-1;   //设置详单编号
-                CPtoBill[i] = allBill.end()->id;
+                allBill[allBill.size()-1].id = allBill.size()-1;   //设置详单编号
+                CPtoBill[i] =  allBill.size()-1;
+                qDebug() << "加入后帐单数为" << allBill.size() << endl;
                 //报表
 //                Report newreport("6-16");
 //                CPToReport[i] = newreport;
@@ -217,26 +219,26 @@ void CPServer::updateTimeDeal()
         {
             if (CP[i].queue.size() == 0)  //该充电桩里没人排队
             {
-               qDebug() << QString("充电桩 %1 处于空闲状态且没人排队").arg(i) << endl;
+//               qDebug() << QString("充电桩 %1 处于空闲状态且没人排队").arg(i) << endl;
                 haveCPFree = 1;
             }
             else    //有人排队，则可以开始工作
             {
                 if (CP[i].queue.size() < MAX_CHARGE_QUEUE_LEN)
                     haveCPFree = 1; //还有空位
-                qDebug() << QString("充电桩 %1 处于空闲状态但有人排队").arg(i) << endl;
+//                qDebug() << QString("充电桩 %1 处于空闲状态但有人排队").arg(i) << endl;
                 //充电桩队列里有人排队，则可以开始充电
                 //充电桩
                 int topUserId = CP[i].queue[0];
                 CP[i].start(allUser[topUserId].NeedChargeTime);
-                qDebug() << QString("用户 %1 开始在充电桩 %2 开始充电 需要 %3 min")
-                         .arg(topUserId).arg(i).arg(allUser[topUserId].NeedChargeTime)<< endl;
+//                qDebug() << QString("用户 %1 开始在充电桩 %2 开始充电 需要 %3 min")
+//                         .arg(topUserId).arg(i).arg(allUser[topUserId].NeedChargeTime)<< endl;
                 // 详单
                 Bill bill;
                 bill.createBill(topUserId, i, systime->hour(), systime->minute(), T_MODE);
                 allBill.push_back(bill);
-                allBill.end()->id = allBill.size()-1;   //设置详单编号
-                CPtoBill[i] = allBill.end()->id;
+                allBill[allBill.size()-1].id = allBill.size()-1;   //设置详单编号
+                CPtoBill[i] =  allBill.size()-1;
                 //报表
 //                Report newreport("6-16");
 //                CPToReport[i] = newreport;
@@ -250,10 +252,10 @@ void CPServer::updateTimeDeal()
             allBill[CPtoBill[i]].updateBill(systime->hour());   //详单进行刷新
             allUser[CP[i].queue[0]].NeedChargeTime -= CPUPDATEPEIROD;
             float rate = allUser[CP[i].queue[0]].mode == F_MODE ? F_RATE : T_RATE;
-            qDebug() << QString("rate====%1=========").arg(rate);
+//            qDebug() << QString("rate====%1=========").arg(rate);
             //Sleep(10);
             allUser[CP[i].queue[0]].havePower += CPUPDATEPEIROD * (rate / 60.0);
-            qDebug() << QString("havepower====%1=========").arg(allUser[CP[i].queue[0]].havePower);
+//            qDebug() << QString("havepower====%1=========").arg(allUser[CP[i].queue[0]].havePower);
             if (CP[i].state == CP_FREE) //由充电状态转为空闲状态，说明充电结束
             {
                 allUser[CP[i].queue[0]].prog = CHARGOK;
@@ -269,6 +271,7 @@ void CPServer::updateTimeDeal()
     if (testFlag)
     {
         testQueue();
+        qDebug() << "事件处理完毕，开始打印" << endl;
     }
 
 }
@@ -299,14 +302,15 @@ void CPServer::testQueue()
 //    {
         for (int i=0; i<CP[1].queue.size(); i++)
         {
-            qDebug() << "充电桩1";
+//            qDebug() << "充电桩1";
             QString str = "(V";
             int userId = CP[1].queue[i];
             str += QString::number(userId) + ",";
             str += QString::number(allUser[userId].havePower, 'f', 2) + ",";
             int billId = CPtoBill[1];
-            str += QString::number(allBill[billId].TotalFare, 'f', 2) + ")\n";
+            str += QString::number(allBill[CPtoBill[1]].ServeFare + allBill[CPtoBill[1]].ChargeFare, 'f', 2) + ")\n";
             file_1.write(str.toUtf8());
+            qDebug() << QString("充电桩 %1 第 %2 个位置 元组为 %3 ").arg(1).arg(i).arg(str);
         }
 //    }
 //    else
@@ -323,8 +327,9 @@ void CPServer::testQueue()
             str += QString::number(userId) + ",";
             str += QString::number(allUser[userId].havePower, 'f', 2) + ",";
             int billId = CPtoBill[2];
-            str += QString::number(allBill[billId].TotalFare, 'f', 2) + "\n";
+            str += QString::number(allBill[CPtoBill[2]].ServeFare + allBill[CPtoBill[2]].ChargeFare, 'f', 2) + ")\n";
             file_2.write(str.toUtf8());
+            qDebug() << QString("充电桩 %1 第 %2 个位置 元组为 %3 ").arg(2).arg(i).arg(str);
         }
 //    }
 //    else
@@ -341,8 +346,9 @@ void CPServer::testQueue()
             str += QString::number(userId) + ",";
             str += QString::number(allUser[userId].havePower, 'f', 2) + ",";
             int billId = CPtoBill[3];
-            str += QString::number(allBill[billId].TotalFare, 'f', 2) + "\n";
+            str += QString::number(allBill[CPtoBill[3]].ServeFare + allBill[CPtoBill[3]].ChargeFare, 'f', 2) + ")\n";
             file_3.write(str.toUtf8());
+            qDebug() << QString("充电桩 %1 第 %2 个位置 元组为 %3 ").arg(3).arg(i).arg(str);
         }
 //    }
 //    else
@@ -359,8 +365,9 @@ void CPServer::testQueue()
             str += QString::number(userId) + ",";
             str += QString::number(allUser[userId].havePower, 'f', 2) + ",";
             int billId = CPtoBill[4];
-            str += QString::number(allBill[billId].TotalFare, 'f', 2) + "\n";
+            str += QString::number(allBill[CPtoBill[4]].ServeFare + allBill[CPtoBill[4]].ChargeFare, 'f', 2) + ")\n";
             file_4.write(str.toUtf8());
+            qDebug() << QString("充电桩 %1 第 %2 个位置 元组为 %3 ").arg(4).arg(i).arg(str);
         }
 //    }
 //    else
@@ -377,8 +384,9 @@ void CPServer::testQueue()
             str += QString::number(userId) + ",";
             str += QString::number(allUser[userId].havePower, 'f', 2) + ",";
             int billId = CPtoBill[5];
-            str += QString::number(allBill[billId].TotalFare, 'f', 2) + "\n";
+            str += QString::number(allBill[CPtoBill[5]].ServeFare + allBill[CPtoBill[5]].ChargeFare, 'f', 2) + ")\n";
             file_5.write(str.toUtf8());
+            qDebug() << QString("充电桩 %1 第 %2 个位置 元组为 %3 ").arg(5).arg(i).arg(str);
         }
 //    }
 //    else
@@ -388,41 +396,78 @@ void CPServer::testQueue()
 
 //    if (file_6->open(QFile::Append | QFile::Text)) //以只读模式打开文件成功
 //    {
-//        int ff = waitarea->it_F;
-//        int tt = waitarea->it_T;
-//        while (ff < waitarea->FQueue.size() && tt < waitarea->TQueue.size())
-//        {
-//            if (waitarea->FQueue[ff] < waitarea->FQueue[ff])
+        int ff = waitarea->it_F;
+        int tt = waitarea->it_T;
+        QString str;
+        while (ff < waitarea->FQueue.size()-1 && tt < waitarea->TQueue.size()-1)
+        {
+            while (waitarea->FQueue[ff] == -1)
+                ff++;
+            while (waitarea->TQueue[ff] == -1)
+                tt++;
+            str += "(V";
+            if (waitarea->FQueue[ff] < waitarea->TQueue[tt])
+            {
 
-//        }
+                str += QString::number(waitarea->FQueue[ff]) + ",";
+                //qDebug() << QString("等候区的用户 id为 %1").arg(tmpUser[i].id) << endl;
+                str += "F";
+                str += ",";
+                str += QString::number(allUser[waitarea->FQueue[ff]].ChargeCapacity, 'f', 2) + ")";
+                str += "-";
+            }
+            else
+            {
+                str += QString::number(waitarea->TQueue[ff]) + ",";
+                //qDebug() << QString("等候区的用户 id为 %1").arg(tmpUser[i].id) << endl;
+                str +="T";
+                str += ",";
+                str += QString::number(allUser[waitarea->FQueue[ff]].ChargeCapacity, 'f', 2) + ")";
+                str += "-";
+            }
+
+        }
         //直接将两个队列合并
-        QVector<User> tmpUser;
-            for(int i=waitarea->it_F; i<waitarea->FQueue.size(); i++)
-            {
-                if (waitarea->FQueue[i] != -1)
-                    tmpUser.push_back(allUser[waitarea->FQueue[i]]);
-            }
-            for(int i=waitarea->it_T; i<waitarea->TQueue.size(); i++)
-            {
-                if (waitarea->TQueue[i] != -1)
-                    tmpUser.push_back(allUser[waitarea->TQueue[i]]);
-            }
+//        QVector<User> tmpUser;
+//            for(int i=waitarea->it_F; i<waitarea->FQueue.size(); i++)
+//            {
+//                if (waitarea->FQueue[i] != -1)
+//                {
+//                    tmpUser.push_back(allUser[waitarea->FQueue[i]]);
+//                    qDebug() << QString("快充电区有用户 %1\n").arg(allUser[waitarea->FQueue[i]].id);
+//                }
+
+//            }
+//            for(int i=waitarea->it_T; i<waitarea->TQueue.size(); i++)
+//            {
+//                if (waitarea->TQueue[i] != -1)
+//                {
+//                    qDebug() << QString("慢充电区有用户 %1\n").arg(allUser[waitarea->FQueue[i]].id);
+//                    tmpUser.push_back(allUser[waitarea->TQueue[i]]);
+//                }
+
+//            }
 
             //按排队号码先后顺序
-            std::sort(tmpUser.begin(), tmpUser.end());
-            QString str;
-            for (int i=0; i<tmpUser.size(); i++)
-            {
-                str += "(V";
-                str += QString::number(tmpUser[i].id) + ",";
-                str += tmpUser[i].mode == F_MODE ? "F" : "T";
-                str += ",";
-                str += QString::number(tmpUser[i].ChargeCapacity, 'f', 2) + ")";
-            }
+//            std::sort(tmpUser.begin(), tmpUser.end());
+//            QString str;
+//            for (int i=0; i<tmpUser.size(); i++)
+//            {
+//                str += "(V";
+//                str += QString::number(tmpUser[i].id) + ",";
+//                qDebug() << QString("等候区的用户 id为 %1").arg(tmpUser[i].id) << endl;
+//                str += tmpUser[i].mode == F_MODE ? "F" : "T";
+//                str += ",";
+//                str += QString::number(tmpUser[i].ChargeCapacity, 'f', 2) + ")";
+//                str += "-";
+//            }
 
             str = str.left(str.length() - 1);
+
             str += "\n";
+//            qDebug() << str ;
             file_6.write(str.toUtf8());
+            qDebug() << QString("等候区的元组为") << str;
 //    }
 //    else
 //    {
@@ -471,26 +516,26 @@ void CPServer::EventCome(QString ch, QString userId, QString mode, float degree)
 
 
             //更改用户状态
-            qDebug() << QString("处理用户 %1 的到来信息").arg(userId) << endl;
+//            qDebug() << QString("处理用户 %1 的到来信息").arg(userId) << endl;
             allUser[uid].WaitNum = waitarea->CusArrive(uid, mode == "F" ? F_MODE : T_MODE);   //修改排队号
 
-            qDebug() << "1======cpserver========" << endl;
+//            qDebug() << "1======cpserver========" << endl;
             callnumToId[allUser[uid].WaitNum] = uid;
-            qDebug() << QString("用户 %1 对应等待号 %2 检测 %3").arg(uid).arg(allUser[uid].WaitNum)
-                        .arg(callnumToId[allUser[uid].WaitNum])
-                     << endl;
+//            qDebug() << QString("用户 %1 对应等待号 %2 检测 %3").arg(uid).arg(allUser[uid].WaitNum)
+//                        .arg(callnumToId[allUser[uid].WaitNum])
+//                     << endl;
             allUser[uid].mode = mode == "F" ? F_MODE : T_MODE;
-            qDebug() << "3=======cpserver=======" << endl;
+//            qDebug() << "3=======cpserver=======" << endl;
             allUser[uid].ChargeCapacity = degree;
-            qDebug() << "4========cpserver=======" << endl;
+//            qDebug() << "4========cpserver=======" << endl;
             allUser[uid].prog = WAIT;
             float v = (allUser[uid].mode == F_MODE ? F_RATE : T_RATE);
             v /= 60;
-            qDebug() << QString("充电速率 %1").arg(v) << endl;
+//            qDebug() << QString("充电速率 %1").arg(v) << endl;
 
             allUser[uid].NeedChargeTime = degree / v;
-            qDebug() << QString("用户成功进入等候区， 需要时间 %1 min")
-                        .arg(allUser[uid].NeedChargeTime) << endl;
+//            qDebug() << QString("用户成功进入等候区， 需要时间 %1 min")
+//                        .arg(allUser[uid].NeedChargeTime) << endl;
         }
     }
     else if (ch == "B")
