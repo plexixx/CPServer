@@ -36,7 +36,7 @@ QT_END_NAMESPACE
 class CPServer : public QObject
 {
     Q_OBJECT
-private:
+public:
     //SysTimer* systimer;         //系统时间
     QTimer * timer;             //计时器，用于系统时间的更新
     User* curmanager;        //当前的管理员，本程序中只实现一个管理员
@@ -80,6 +80,7 @@ public:
     bool TurnOffCP(int CPid, bool mode);    //关闭编号为id的充电桩
     bool NewCusArrive(int chargeType, int chargeQuantity);  //新用户要进入等候区
     void delCus(int CPid, bool mode, int userID); //从充电区删除用户
+    void saveReport();
 
     CPServer(QWidget *parent = nullptr);
     ~CPServer();
