@@ -7,6 +7,7 @@ debug/report.o
 debug/tcpserver.o
 debug/tcpsocket.o
 debug/connectsql.o
+debug/testqueue.o
 debug/user.o
 debug/waitarea.o
 debug/moc_cpserver.o

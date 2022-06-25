@@ -15,8 +15,14 @@
 #include <MacroDefine.h>
 #include <waitarea.h>
 #include <user.h>
-#include <QFile>
 
+
+#include <QFile>
+#include <QTextStream>
+#include <QIODevice>
+#include <QTextCodec>
+#include <QByteArray>
+#include <Windows.h>
 //#include "qexcelexport.h"
 
 #pragma execution_character_set("utf-8")
@@ -41,7 +47,7 @@ public:
     WaitArea* waitarea;
     User* curUser;
     QVector<Bill> allBill;      //
-    QMap<int, int> CPtoBill; //充电桩到详单的映射
+    QMap<int, int>CPtoBill; //充电桩到详单的映射
     QVector<User> allUser;  //所有的的用户
     //QMap<int, Report>CPToReport;    //充电桩到报表的映射
 
@@ -54,7 +60,12 @@ public:
 
     QMap<QString, QString> TimetoEvent; //时间对事件的映射
 
-
+//    QFile *file_1;
+//    QFile *file_2;
+//    QFile *file_3;
+//    QFile *file_4;
+//    QFile *file_5;
+//    QFile *file_6;
 
 public:
     //处理事件
@@ -97,8 +108,7 @@ public:
 
     void getEvent();
 
-    void saveReport(); // 保存报表
-    void saveBill(Bill bill); // 保存详单
+    void testQueue();
 
 
 public slots:
