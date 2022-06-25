@@ -172,6 +172,22 @@ CPServer::~CPServer()
     timer->stop();
 }
 
+bool CPServer::isEmpty(bool mode)
+{
+    int start = mode ? 0 : MAX_F_CPNUM;
+    int end = mode ? MAX_F_CPNUM : CP.size();
+    for(int i = start; i < end; i++)
+    {
+        for(int j = 0; j < MAX_CHARGE_QUEUE_LEN; j++)
+        {
+            if(CP[i].queue[j] > 0)
+                return false; //存在车辆进行排队
+        }
+    }
+    return true;
+}
+
+
 //处理事件
 void CPServer::EventCome(char ch, QString userId, char mode, float degree)
 {
@@ -190,7 +206,7 @@ void CPServer::EventCome(char ch, QString userId, char mode, float degree)
             //更改用户状态
             curUser->WaitNum = waitarea->CusArrive(uid, mode);   //修改排队号
             callnumToId[curUser->WaitNum] = curUser->id;
-            curUser->mode = mode;
+            curUser->mode = mode == 'F' ? true : false;
             curUser->ChargeCapacity = degree;
             break;
         }
@@ -200,20 +216,29 @@ void CPServer::EventCome(char ch, QString userId, char mode, float degree)
             {
                 //启动优先级调度
                 waitarea->StartPriority = 1;
-                bool mode = (userId[0] == 'T') ? true : false;
+                bool mode1 = (userId[0] == 'T') ? true : false;
                 userId.remove(0, 1);
-                int errID = mode ? userId.toInt() : userId.toInt() + MAX_F_CPNUM;
-                prioritySchedule(errID, mode);
+                int errID = mode1 ? userId.toInt() : userId.toInt() + MAX_F_CPNUM;
+                prioritySchedule(errID, mode1);
             }
             else //恢复
             {
                 waitarea->StartPriority = 0;
                 /*
-                 * TODO
                  * 若其它同类型充电桩中尚有车辆排队，则暂停等候区叫号服务
                  * 将其它同类型充电桩中尚未充电的车辆合为一组，按照排队号码先后顺序重新调度
                  * 调度完毕后，再重新开启等候区叫号服务。
                  */
+                bool mode1 = mode == 'F' ? true : false;
+                int errID = mode1 ? userId.toInt() : userId.toInt() + MAX_F_CPNUM;
+                if(!isEmpty(mode1)) //其它同类型充电桩中尚有车辆排队
+                {
+                    timeSchedule(errID, mode1);
+                }
+                else
+                {
+                    waitarea->CallFlag = true;
+                }
             }
 
             break;
