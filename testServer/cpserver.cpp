@@ -26,6 +26,9 @@ CPServer::CPServer(QWidget *parent)
     timer->start(MS_PER_MIN);
 
 
+//    connect(this, SIGNAL(signal_startpower()), this, );
+//    connect(this, SIGNAL(signal_endpower()), this, );
+
 
 
     tcp_server = new QTcpServer;
@@ -151,6 +154,24 @@ void CPServer::addSecs()
     // 空着就行
     systime->addSecs(60); //每过去1分钟，进行状态的刷新
 }
+
+
+/*
+ *
+ * TODO
+ * 启动/停止充电信号
+ */
+void CPServer::signal_startpower()
+{
+
+}
+
+void CPServer::signal_endpower()
+{
+
+}
+
+
 
 bool CPServer::getLoginResult(QString name, QString pswd)
 {
