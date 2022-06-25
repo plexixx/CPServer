@@ -47,10 +47,10 @@ void CPServer::updateTimeDeal()
     if (systime->msec() % 5 == 0)   //5分钟考虑一次更新
     {
         //1、 先考虑充电桩的状态，以及详单和报表的更新
-        emit signal_startpower();
+//        emit signal_startpower();
 
 
-        emit signal_endpower();
+//        emit signal_endpower();
         //2、再考虑 等候区的状态
 
         //3、再考虑叫号和调度进入充电区问题

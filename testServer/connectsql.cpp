@@ -1,16 +1,16 @@
 ﻿#include "connectsql.h"
 
-SysTimer mySysTimer;
+//SysTimer mySysTimer;
 QVector<ChargePile> myChargePile;
 QVector<Bill> myBill;
 QVector<User> myUser;
 QVector<Report> myreport;
 
 //将SysTimer转换成QString
-QString toString(SysTimer mySysTimer){
-    QString str = mySysTimer.toString();
-    return str;
-}
+//QString toString(SysTimer mySysTimer){
+//    QString str = mySysTimer.toString();
+//    return str;
+//}
 
 //将QString转换成SysTimer
 //SysTimer stringTo(QString str){
@@ -23,15 +23,15 @@ QString toString(SysTimer mySysTimer){
 void loadData(){
     QSqlDatabase db = QSqlDatabase::database("QSQLITE");
     QSqlQuery query(db);
-    query.exec("select * from SysTimer");
-    if(query.next()){
-        mySysTimer.year = query.value(0).toInt();
-        mySysTimer.mon = query.value(1).toInt();
-        mySysTimer.week = query.value(2).toInt();
-        mySysTimer.day = query.value(3).toInt();
-        mySysTimer.hour = query.value(4).toInt();
-        mySysTimer.min = query.value(5).toInt();
-    }
+//    query.exec("select * from SysTimer");
+//    if(query.next()){
+//        mySysTimer.year = query.value(0).toInt();
+//        mySysTimer.mon = query.value(1).toInt();
+//        mySysTimer.week = query.value(2).toInt();
+//        mySysTimer.day = query.value(3).toInt();
+//        mySysTimer.hour = query.value(4).toInt();
+//        mySysTimer.min = query.value(5).toInt();
+//    }
     query.exec("select * from ChargPile");
     while(query.next()){
         ChargePile tmp;
@@ -46,12 +46,12 @@ void loadData(){
     while(query.next()){
         Bill tmp;
         tmp.id = query.value(0).toInt();
-        tmp.CreateTime = stringTo(query.value(1).toString());
+        //tmp.CreateTime = stringTo(query.value(1).toString());
         tmp.ChargeId = query.value(2).toInt();
         tmp.ChargeCapacity = query.value(3).toFloat();
         tmp.ChargeTime = query.value(4).toInt();
-        tmp.BeginPowerTime = stringTo(query.value(5).toString());
-        tmp.EndPowerTime = stringTo(query.value(6).toString());
+//        tmp.BeginPowerTime = stringTo(query.value(5).toString());
+//        tmp.EndPowerTime = stringTo(query.value(6).toString());
         tmp.ChargeFare = query.value(7).toFloat();
         tmp.ServeFare = query.value(8).toFloat();
         tmp.TotalFare = query.value(9).toFloat();
@@ -84,15 +84,15 @@ void loadData(){
 void storeData(){
     QSqlDatabase db = QSqlDatabase::database("QSQLITE");
     QSqlQuery query(db);
-    query.exec("delete from SysTimer");
-    query.prepare("insert into SysTimer(year,mon,week,day,hour,min)");
-    query.bindValue(0,mySysTimer.year);
-    query.bindValue(1,mySysTimer.mon);
-    query.bindValue(2,mySysTimer.week);
-    query.bindValue(3,mySysTimer.day);
-    query.bindValue(4,mySysTimer.hour);
-    query.bindValue(5,mySysTimer.min);
-    query.exec();
+//    query.exec("delete from SysTimer");
+//    query.prepare("insert into SysTimer(year,mon,week,day,hour,min)");
+//    query.bindValue(0,mySysTimer.year);
+//    query.bindValue(1,mySysTimer.mon);
+//    query.bindValue(2,mySysTimer.week);
+//    query.bindValue(3,mySysTimer.day);
+//    query.bindValue(4,mySysTimer.hour);
+//    query.bindValue(5,mySysTimer.min);
+//    query.exec();
 
     query.exec("delete from ChargPile");
     query.prepare("insert into ChargPile(ChargId,rate,DayTotalNum,DayTotalTime,DayTotalPower)");
@@ -110,12 +110,12 @@ void storeData(){
                   "BeginPowerTime,EndPowerTime,ChargeFare,ServeFare,TotalFare)");
     for(int i=0;i<myBill.size();i++){
         query.bindValue(0,myBill[i].id);
-        query.bindValue(1,toString(myBill[i].CreateTime));
+        query.bindValue(1,myBill[i].timeToString(myBill[i].createHour, myBill[i].createMin));
         query.bindValue(2,myBill[i].ChargeId);
         query.bindValue(3,myBill[i].ChargeCapacity);
         query.bindValue(4,myBill[i].ChargeTime);
-        query.bindValue(5,toString(myBill[i].BeginPowerTime));
-        query.bindValue(6,toString(myBill[i].EndPowerTime));
+        query.bindValue(5,myBill[i].timeToString(myBill[i].beginHour, myBill[i].beginMin));
+        query.bindValue(6,myBill[i].timeToString(myBill[i].endHour, myBill[i].endMin));
         query.bindValue(7,myBill[i].ChargeFare);
         query.bindValue(8,myBill[i].ServeFare);
         query.bindValue(9,myBill[i].TotalFare);

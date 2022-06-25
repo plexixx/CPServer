@@ -83,7 +83,6 @@ public:
 public slots:
     void updateTimeDeal();
     void addSecs();
-
     void signal_startpower();   //开始充电信号
     void signal_endpower();     //结束充电信号
 };

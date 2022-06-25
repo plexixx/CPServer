@@ -15,7 +15,7 @@
 //等候区
 class WaitArea
 {
-    Q_OBJECT
+
 public:
     int CurParkNum;     //当前车位容量
 

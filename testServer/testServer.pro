@@ -34,7 +34,6 @@ SOURCES += \
     db.cpp \
         main.cpp \
     report.cpp \
-    systimer.cpp \
     tcpserver.cpp \
     tcpsocket.cpp \
     connectsql.cpp \
