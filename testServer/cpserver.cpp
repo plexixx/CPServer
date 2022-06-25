@@ -334,6 +334,22 @@ void CPServer::EventCome(QString ch, QString userId, QString mode, float degree)
 
         if(allUser[uid].prog == WAIT) //允许在等候区修改
         {
+            if (mode == allUser[uid].mode && degree != allUser[uid].ChargeCapacity)
+                // 充电模式不变，仅更改充电度数
+            {
+                if (allUser[uid].prog == WAIT)
+                {
+                    allUser[uid].ChargeCapacity = degree;
+                    float v = (mode == F_MODE ? F_RATE : T_RATE);
+                    allUser[uid].NeedChargeTime = degree / (v / 60.0);
+                }
+                else if (allUser[uid].prog == CHARGEPOW ||
+                         allUser[uid].prog == CHARGEWAIT)
+                {
+                    CP[allUser[uid].CPid].cancelPower(uid);
+                }
+
+            }
             //修改请求充电量
             if(mode == 'O')
             {
@@ -343,6 +359,7 @@ void CPServer::EventCome(QString ch, QString userId, QString mode, float degree)
             //修改充电模式
             else
             {
+                if (mode == allUser[uid].mode)
                 allUser[uid].mode = (mode == 'F') ? true : false;
 
             }
