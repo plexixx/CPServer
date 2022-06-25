@@ -56,7 +56,7 @@ void CPServer::updateTimeDeal()
             {
                 haveCPFree = 1;
             }
-            else
+            else    //有人排队，则可以开始工作
             {
                 //充电桩队列里有人排队，则可以开始充电
                 //充电桩
@@ -70,9 +70,15 @@ void CPServer::updateTimeDeal()
                 CPtoBill[i] = allBill.end()->id;
                 //报表
                 Report newreport("6-16");
-
+                CPToReport[i] = newreport;
 
             }
+        }
+        else if (CP[i].state == CP_POWERING)    //充电桩处于充电状态
+        {
+            CP[i].OverPeriodUpdate();   //充电桩进行刷新
+            allBill[CPtoBill[i]].updateBill(systime->hour());
+            if ()
         }
     }
 
