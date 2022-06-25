@@ -1,4 +1,5 @@
 ﻿#include "bill.h"
+#include <QDebug>
 
 Bill::Bill()
 {
@@ -22,6 +23,8 @@ void Bill::createBill(int chargeID,int hour, int min, int mode)
         electricity = F_RATE;
     else
         electricity = T_RATE;
+    qDebug() << "Bill::createBill" << endl;
+
 }
 
 void Bill::finishBill(int hour, int min)

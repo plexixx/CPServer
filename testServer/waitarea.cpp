@@ -5,6 +5,8 @@ WaitArea::WaitArea()
 {
     CurParkNum = 0;
     CallFlag = true;
+    it_F = 0;
+    it_T = 0;
 }
 
 int WaitArea::CusArrive(int cusId, int askType)
@@ -16,14 +18,14 @@ int WaitArea::CusArrive(int cusId, int askType)
         qDebug() << QString("1==============") << endl;
         FQueue.push_back(cusId);
         qDebug() << QString("2==============") << endl;
-        return  FQueue.size();
+        return  FQueue.size()-1;
     }
     else
     {
         qDebug() << QString("3==============") << endl;
         TQueue.push_back(cusId);
         qDebug() << QString("4==============") << endl;
-        return TQueue.size();
+        return TQueue.size()-1;
     }
 }
 

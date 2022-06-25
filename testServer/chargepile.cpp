@@ -1,4 +1,5 @@
 ﻿#include "chargepile.h"
+#include <QDebug>
 
 ChargePile::ChargePile()
 {
@@ -51,6 +52,7 @@ void ChargePile::turnOff(int id, int type)
     ChargDu = 0;
     ChargTime = 0;
     state = CP_POWERING;
+    qDebug() << "ChargePile::start充电桩开始充电" << endl;
  }
 
  void ChargePile::OverPeriodUpdate()
@@ -70,6 +72,7 @@ void ChargePile::turnOff(int id, int type)
         //timer.stop();   //停止计时
         SurplusPowtime = 0;
         state = CP_FREE;    //结束充电状态
+        queue.pop_front();
     }
  }
 
