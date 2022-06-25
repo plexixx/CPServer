@@ -93,6 +93,7 @@ void CPServer::updateTimeDeal()
                      << "累计总费用: " << report[i].TotalFare << endl
                      << "-------------------------" << endl;
         }
+        qApp->quit();
     }
 
     //输入事件处理
@@ -169,7 +170,6 @@ void CPServer::updateTimeDeal()
     {
         if (CP[i].state == CP_FREE)   //充电桩处于空闲状态
         {
-
             if (CP[i].queue.size() == 0)  //该充电桩里没人排队
             {
                 qDebug() << QString("充电桩 %1 处于空闲状态且没人排队").arg(i) << endl;
@@ -183,16 +183,13 @@ void CPServer::updateTimeDeal()
                 //充电桩队列里有人排队，则可以开始充电
                 //充电桩
                 int topUserId = CP[i].queue[0];
-                CP[i].start(allUser[topUserId].CurPower);
+                CP[i].start(allUser[topUserId].NeedChargeTime);
                 // 详单
                 Bill bill;
                 bill.createBill(topUserId, i, systime->hour(), systime->minute(), F_MODE);
                 allBill.push_back(bill);
                 allBill.end()->id = allBill.size()-1;   //设置详单编号
                 CPtoBill[i] = allBill.end()->id;
-                //报表
-//                Report newreport("6-16");
-//                CPToReport[i] = newreport;
 
             }
         }
@@ -203,6 +200,7 @@ void CPServer::updateTimeDeal()
             if (CP[i].state == CP_FREE) //由充电状态转为空闲状态，说明充电结束
             {
                  allBill[CPtoBill[i]].finishBill(systime->hour(), systime->minute());
+                 //qDebug() << QString("快充报表更新%1").arg(i) << endl;
                  report[i].UpdateReport(CP[i], allBill[CPtoBill[i]]);   //得到所有的报表
             }
         }
@@ -249,6 +247,7 @@ void CPServer::updateTimeDeal()
             if (CP[i].state == CP_FREE) //由充电状态转为空闲状态，说明充电结束
             {
                  allBill[CPtoBill[i]].finishBill(systime->hour(), systime->minute());
+                 qDebug() << QString("慢充报表更新%1").arg(i) << endl;
                  report[i].UpdateReport(CP[i], allBill[CPtoBill[i]]);   //得到所有的报表
             }
         }
