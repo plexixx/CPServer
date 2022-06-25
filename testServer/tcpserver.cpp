@@ -160,32 +160,52 @@ void TcpServer::Socket_Data_Processing(QString SendData,int descriptor)
                 answerType = "mStatusResult";
                 answer = QString::number(pileNum);
 
-                for(int i = 0; i < pileNum; i++){
-                    QString str;
-                    //str = ???
+                QString str;
+
+                for(int i = 1; i <= MAX_F_CPNUM + MAX_T_CPNUM; i++){
+                    str += QString("%1,%2,%3,%4\n")
+                            .arg(server.CP[i].state)
+                            .arg(server.report[i].TotalChargeNum)
+                            .arg(server.report[i].TotalChargeTime)
+                            .arg(server.report[i].TotalChargeCapacity);
                     /*
-                     * TODO:将各充电桩的当前状态信息
+                     * 将各充电桩的当前状态信息
                      * （是否正常工作、系统启动后累计充电次数、充电总时长、充电总电量）
                      * 组合成一条QString语句，赋值给str
                     */
-                    answer = str;
+
                 }
+                answer = str;
             }
             else if(requestType == "mWait")
             {
                 answerType = "mWaitResult";
                 answer = QString::number(pileNum);
 
-                for(int i = 0; i < pileNum; i++){
-                    QString str;
-                    //str = ???
+                QString str;
+
+                for(int i = 1; i <= MAX_F_CPNUM + MAX_T_CPNUM; i++){
+                    if(i <= MAX_F_CPNUM)
+                        str += QString("F%1\n").arg(i);
+                    else
+                        str += QString("T%1\n").arg(i - MAX_F_CPNUM);
+                    for(int j = 0; j < server.CP[i].queue.size(); j++)
+                    {
+                        int uid = server.CP[i].queue[j];
+                        str += QString("%1,%2,%3,%4\n")
+                                .arg(uid)
+                                .arg(server.allUser[uid].MaxCapacity)
+                                .arg(server.allUser[uid].ChargeCapacity)
+                                .arg(server.allUser[uid].QueueTime);
+                    }
                     /*
-                     * TODO:将各充电桩等候服务的车辆信息
+                     * 将各充电桩等候服务的车辆信息
                      * （用户ID、车辆电池总容量(度)、请求充电量(度)、排队时长）
                      * 组合成一条QString语句，赋值给str
                     */
-                    answer = str;
+
                 }
+                answer = str;
             }
             else if(requestType == "mWaitArea")
             {
@@ -197,18 +217,31 @@ void TcpServer::Socket_Data_Processing(QString SendData,int descriptor)
                 answerType = "mReportResult";
                 answer = QString::number(pileNum);
 
-                for(int i = 0; i < pileNum; i++){
-                    QString str;
-                    //str = ???
+                QString str;
+
+                for(int i = 1; i <= MAX_F_CPNUM + MAX_T_CPNUM; i++){
                     /*
-                     * TODO:将报表的各项信息：
+                     * 将报表的各项信息：
                      * 时间(日、周、月)、充电桩编号、累计充电次数、累计充电时长、
                      * 累计充电量、累计充电费用、累计服务费用、累计总费用
                      * 组合成一条QString语句，赋值给str
                     */
-                    answer = str;
+                    int pileID = (i <= MAX_F_CPNUM) ? i : i - MAX_F_CPNUM;
+                    if(i <= MAX_F_CPNUM)
+                        str += QString("F%1\n").arg(i);
+                    else
+                        str += QString("T%1\n").arg(i - MAX_F_CPNUM);
 
+                    str += QString("2022-6-25,%1")
+                            .arg(pileID)
+                            .arg(server.report[i].TotalChargeNum)
+                            .arg(server.report[i].TotalChargeTime)
+                            .arg(server.report[i].TotalChargeCapacity)
+                            .arg(server.report[i].TotalChargeFare)
+                            .arg(server.report[i].TotalServeFare)
+                            .arg(server.report[i].TotalFare);
                 }
+                answer = str;
             }
 
             // write response
@@ -299,7 +332,7 @@ QString TcpServer::getAllSheet()
 
 bool TcpServer::getOpenResult(bool type, QString isOpen, int No)
 {
-    // TODO: 服务器拿到数据开启/关闭充电桩。
+    // 服务器拿到数据开启/关闭充电桩。
     //type: false慢充，true快充
     //isOpen: 两种值"open"或者"close"
     //No：充电桩对应的编号

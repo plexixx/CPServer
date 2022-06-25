@@ -63,7 +63,7 @@ CPServer::CPServer(QWidget *parent)
     QFile billFile("../bill.csv"); // 详单文件
 
     // 删除旧文件
-    if (billFile.open(QFile::ReadWrite | QFile::Text))
+    if (billFile.open(QFile::WriteOnly | QFile::Text))
         billFile.close();
 }
 
@@ -810,7 +810,7 @@ void CPServer::saveBill(Bill bill)
         QTextStream out(&file);
         //in.setCodec(QTextCodec::codecForName("UTF-8"));
 
-        QString str = QString("%1,%2,%3,%4,%5,%6,%7,%8,%9,%10\n")
+        QString str = QString("%1,%2,%3,%4:%5,%6:%7,%8,%9,%10\n")
                 .arg(bill.uid)
                 .arg(bill.ChargeId)
                 .arg(bill.ChargeCapacity)
