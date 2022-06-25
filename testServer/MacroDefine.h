@@ -27,6 +27,7 @@
 #define WAIT 0      //等候区
 #define CHARGEWAIT 1     //充电区等待
 #define CHARGEPOW 2  //充电区充电
+#define CHARGOK 3   //充电完成
 
 #define MAX_PARK_NUM 10    //等候区最大停车数目
 

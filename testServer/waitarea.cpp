@@ -37,16 +37,28 @@ int WaitArea::CallNum(int askType)
     if (askType == F_MODE && it_F < FQueue.size())
     {
         int num = FQueue[it_F++];    //取出第一个号
+        while (num == -1 )
+        {
+            if (it_F >= FQueue.size())
+                return -1;
+            num = FQueue[it_F++];
+        }
         CurParkNum--;   //叫号叫走了当然空出车位了
         return  num;            //返回被叫号的号码
     }
     else if (askType == T_MODE && it_T < TQueue.size())
     {
         int num = TQueue[it_T++];    //取出第一个号
+        while (num == -1)
+        {
+            if (it_T >= TQueue.size())
+                return -1;
+            num = TQueue[it_T++];
+        }
         CurParkNum--;   //叫号叫走了当然空出车位了
         return  num;            //返回被叫号的号码
     }
-    return 0;
+    return -1;
 }
 
 void WaitArea::StartPriorityCallNum(bool mode, QVector<int> q)
@@ -77,11 +89,11 @@ int WaitArea::PriorityCallNum(bool mode)
 {
     if(mode)
     {
-
         //如果故障队列都调度完毕，则开启普通调度
         if(it_EF >= E_FQueue.size())
         {
-            CallFlag = true;
+            StartPriority = 0;
+            //CallFlag = true;
             return CallNum(mode);
         }
 
@@ -95,7 +107,8 @@ int WaitArea::PriorityCallNum(bool mode)
         //如果故障队列都调度完毕，则开启普通调度
         if(it_ET >= E_TQueue.size())
         {
-            CallFlag = true;
+            StartPriority = 0;
+            //CallFlag = true;
             return CallNum(mode);
         }
 
@@ -180,27 +193,42 @@ void WaitArea::M_CallNum(int Fnum, int Tnum, QVector<int>&Fcus, QVector<int>&Tcu
 
 void WaitArea::ReGenerateNum(int id, int oldType)
 {
+    qDebug() << "开始等候区的删除" << endl;
     CurParkNum--;
     //从原来队列中删除
     int it;
     if (oldType == F_MODE)
     {
         it = it_F;
-        for (; it<=FQueue.size()-1; it++)
+        bool flag = 0;
+        while (it <= FQueue.size()-1)
         {
             if (FQueue[it] == id)
-                break;
+            {
+                qDebug() << "找到取消充电的用户了" << endl;
+                flag = 1;
+                 break;
+            }
+            it++;
         }
-        FQueue.erase(FQueue.begin()+it);
+        if (flag) FQueue[it] = -1;
     }
     else {
         it = it_T;
-        for (; it<=TQueue.size()-1; it++)
+        bool flag = 0;
+        while (it <= TQueue.size()-1)
+
         {
             if (TQueue[it] == id)
-                break;
-        }
-        TQueue.erase(FQueue.begin()+it);
-    }
+            {
+                qDebug() << "找到取消充电的用户了" << endl;
+                flag = 1;
+                 break;
+            }
 
+            it++;
+        }
+        if (flag) TQueue[it] = -1;
+    }
+    qDebug() << "完成等候区的删除" << endl;
 }
