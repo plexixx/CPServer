@@ -1,6 +1,11 @@
 ﻿#include "cpserver.h"
 #include "ui_cpserver.h"
 #include <QDebug>
+#include <QFile>
+#include <QTextStream>
+#include <QIODevice>
+#include <QTextCodec>
+#include <QByteArray>
 
 QVector<User> aCustomer;
 
@@ -13,11 +18,12 @@ CPServer::CPServer(QWidget *parent)
     db = new DB();
     FCallNum = 1;
     TCallNum = 1;
+    getEvent();
 
     //系统时间更新
     //systimer = new SysTimer();
     timer = new QTimer; //创建定时器
-    systime = new QTime(5,55); // 6:00:00，启动后进入到5点55，
+    systime = new QTime(6,00); // 6:00:00，启动后进入到5点55，
     connect(timer, SIGNAL(timeout()), this, SLOT(addSecs()));
     //连接槽函数，将timer的timeout行为，连接到updateTime函数中
     connect(timer, SIGNAL(timeout()), this, SLOT(updateTimeDeal()));
@@ -53,6 +59,25 @@ CPServer::CPServer(QWidget *parent)
 
 void CPServer::updateTimeDeal()
 {
+
+    if (systime->minute() % 5 == 0)
+    {
+
+        QString tmpTimeStr = QString("%1:%2:00").arg(systime->hour())
+                .arg(systime->minute());
+        qDebug() << QString("%1 进行事件的判断").arg(tmpTimeStr) << endl;
+        if (TimetoEvent[tmpTimeStr].isEmpty() == 0)
+        {
+            qDebug() << "匹配到事件" << endl;
+            QString eventStr = TimetoEvent[tmpTimeStr];
+            QString type = eventStr.section(',', 0, 0);
+            QString id = eventStr.section(',', 1, 1);
+            QString mode = eventStr.section(',', 2, 2);
+            float du = eventStr.section(',', 3, 3).toInt();
+            EventCome(type, id, mode, du);
+        }
+    }
+
     qDebug() << QString("%1:%2 进行状态更新").arg(systime->hour())
                 .arg(systime->minute()) << endl;
 
@@ -195,99 +220,168 @@ CPServer::~CPServer()
 }
 
 //处理事件
-void CPServer::EventCome(char ch, QString userId, char mode, float degree)
+void CPServer::EventCome(QString ch, QString userId, QString mode, float degree)
 {
     User* curUser;
-    switch (ch) {
-        case 'A':
+
+    if (ch == "A")
+    {
+        userId.remove(0, 1);
+        int uid = userId.toInt();
+        curUser = userList[uid];
+        if (waitarea->CurParkNum >= MAX_PARK_NUM)
         {
+            qDebug()<< "当前等候区车位已满，用户无法进入充电桩" << endl;
+        }
+
+        //更改用户状态
+        qDebug() << QString("处理用户 %1 的到来信息").arg(userId) << endl;
+        curUser->WaitNum = waitarea->CusArrive(uid, mode.toInt());   //修改排队号
+        callnumToId[curUser->WaitNum] = curUser->id;
+        curUser->mode = mode.toInt();
+        curUser->ChargeCapacity = degree;
+        curUser->prog = WAIT;
+    }
+    else if (ch == "B")
+    {
+        if(degree == 0) //故障
+        {
+            //启动优先级调度
+            waitarea->StartPriority = 1;
+            bool mode = (userId[0] == 'T') ? true : false;
             userId.remove(0, 1);
-            int uid = userId.toInt();
-            curUser = userList[uid];
-            if (waitarea->CurParkNum >= MAX_PARK_NUM)
-            {
-                qDebug()<< "当前等候区车位已满，用户无法进入充电桩" << endl;
-            }
-
-            //更改用户状态
-            qDebug() << QString("处理用户 %d1 的到来信息").arg(userId) << endl;
-            curUser->WaitNum = waitarea->CusArrive(uid, mode);   //修改排队号
-            callnumToId[curUser->WaitNum] = curUser->id;
-            curUser->mode = mode;
-            curUser->ChargeCapacity = degree;
-            curUser->prog = WAIT;
-            break;
+            int errID = mode ? userId.toInt() : userId.toInt() + MAX_F_CPNUM;
+            prioritySchedule(errID, mode);
         }
-        case 'B':
+        else //恢复
         {
-            if(degree == 0) //故障
-            {
-                //启动优先级调度
-                waitarea->StartPriority = 1;
-                bool mode = (userId[0] == 'T') ? true : false;
-                userId.remove(0, 1);
-                int errID = mode ? userId.toInt() : userId.toInt() + MAX_F_CPNUM;
-                prioritySchedule(errID, mode);
-            }
-            else //恢复
-            {
-                waitarea->StartPriority = 0;
-                /*
-                 * TODO
-                 * 若其它同类型充电桩中尚有车辆排队，则暂停等候区叫号服务
-                 * 将其它同类型充电桩中尚未充电的车辆合为一组，按照排队号码先后顺序重新调度
-                 * 调度完毕后，再重新开启等候区叫号服务。
-                 */
-            }
-
-            break;
+            waitarea->StartPriority = 0;
+            /*
+             * TODO
+             * 若其它同类型充电桩中尚有车辆排队，则暂停等候区叫号服务
+             * 将其它同类型充电桩中尚未充电的车辆合为一组，按照排队号码先后顺序重新调度
+             * 调度完毕后，再重新开启等候区叫号服务。
+             */
         }
-        case 'C':
+
+    }
+
+    else if (ch == "C")
+    {
+        // 修改请求
+        userId.remove(0, 1);
+        int uid = userId.toInt();
+
+        if(userList[uid]->prog == WAIT) //允许在等候区修改
         {
-            // 修改请求
-            userId.remove(0, 1);
-            int uid = userId.toInt();
-
-            if(userList[uid]->prog == WAIT) //允许在等候区修改
+            //修改请求充电量
+            if(mode == 'O')
             {
-                //修改请求充电量
-                if(mode == 'O')
-                {
-                    userList[uid]->ChargeCapacity = degree;
-                    userList[uid]->updateRequest(degree, userList[uid]->mode);
-                }
-                //修改充电模式
-                else
-                {
-                    userList[uid]->mode = (mode == 'F') ? true : false;
-
-                }
+                userList[uid]->ChargeCapacity = degree;
+                userList[uid]->updateRequest(degree, userList[uid]->mode);
             }
-            else //不允许在充电区修改
+            //修改充电模式
+            else
             {
-                //取消充电
-                delCus(userList[uid]->CPid, userList[uid]->mode, uid);
+                userList[uid]->mode = (mode == 'F') ? true : false;
 
-                //修改请求充电量
-                if(mode == 'O')
-                {
-                    userList[uid]->ChargeCapacity = degree;
-                    waitarea->CusArrive(uid, userList[uid]->mode);
-                }
-                //修改充电模式
-                else
-                {
-                    userList[uid]->mode = (mode == 'F') ? true : false;
-                    waitarea->CusArrive(uid, userList[uid]->mode);
-                }
             }
-            break;
         }
-        default:
+        else //不允许在充电区修改
         {
-            break;
+            //取消充电
+            delCus(userList[uid]->CPid, userList[uid]->mode, uid);
+
+            //修改请求充电量
+            if(mode == 'O')
+            {
+                userList[uid]->ChargeCapacity = degree;
+                waitarea->CusArrive(uid, userList[uid]->mode);
+            }
+            //修改充电模式
+            else
+            {
+                userList[uid]->mode = (mode == 'F') ? true : false;
+                waitarea->CusArrive(uid, userList[uid]->mode);
+            }
         }
     }
+//    switch (ch) {
+//        case 'A':
+//        {
+
+//            break;
+//        }
+//        case 'B':
+//        {
+//            if(degree == 0) //故障
+//            {
+//                //启动优先级调度
+//                waitarea->StartPriority = 1;
+//                bool mode = (userId[0] == 'T') ? true : false;
+//                userId.remove(0, 1);
+//                int errID = mode ? userId.toInt() : userId.toInt() + MAX_F_CPNUM;
+//                prioritySchedule(errID, mode);
+//            }
+//            else //恢复
+//            {
+//                waitarea->StartPriority = 0;
+//                /*
+//                 * TODO
+//                 * 若其它同类型充电桩中尚有车辆排队，则暂停等候区叫号服务
+//                 * 将其它同类型充电桩中尚未充电的车辆合为一组，按照排队号码先后顺序重新调度
+//                 * 调度完毕后，再重新开启等候区叫号服务。
+//                 */
+//            }
+
+//            break;
+//        }
+//        case 'C':
+//        {
+//            // 修改请求
+//            userId.remove(0, 1);
+//            int uid = userId.toInt();
+
+//            if(userList[uid]->prog == WAIT) //允许在等候区修改
+//            {
+//                //修改请求充电量
+//                if(mode == 'O')
+//                {
+//                    userList[uid]->ChargeCapacity = degree;
+//                    userList[uid]->updateRequest(degree, userList[uid]->mode);
+//                }
+//                //修改充电模式
+//                else
+//                {
+//                    userList[uid]->mode = (mode == 'F') ? true : false;
+
+//                }
+//            }
+//            else //不允许在充电区修改
+//            {
+//                //取消充电
+//                delCus(userList[uid]->CPid, userList[uid]->mode, uid);
+
+//                //修改请求充电量
+//                if(mode == 'O')
+//                {
+//                    userList[uid]->ChargeCapacity = degree;
+//                    waitarea->CusArrive(uid, userList[uid]->mode);
+//                }
+//                //修改充电模式
+//                else
+//                {
+//                    userList[uid]->mode = (mode == 'F') ? true : false;
+//                    waitarea->CusArrive(uid, userList[uid]->mode);
+//                }
+//            }
+//            break;
+//        }
+//        default:
+//        {
+//            break;
+//        }
+//    }
 }
 
 
@@ -328,7 +422,41 @@ bool CPServer::getLoginResult(QString name, QString pswd)
 
 void CPServer::getEvent()
 {
+    QFile file ("../test.txt");  //建立一个文件对象
 
+
+    if (file.open(QFile::ReadOnly | QFile::Text)) //以只读模式打开文件成功
+    {
+        QTextStream in(&file);
+        //in.setCodec(QTextCodec::codecForName("UTF-8"));
+        in.seek(0); //把位置设置为0，以便从头开始读取
+
+        while (!in.atEnd())   //判断文本流是否到达了文件尾
+        {
+            QString str = in.readLine(); //读取一行，不包含换行符
+
+            if (str.isEmpty())
+            {
+                qDebug() << "Failed to read line, no information matched";
+                continue;
+            }
+            else
+            {
+                QString timeStr = str.section(',', 0, 0);
+                QString eventStr = str.section(',', 1, 4);
+                TimetoEvent[timeStr] = eventStr;
+            }
+
+        }
+
+    }
+    else
+    {
+        qDebug() << "File Open Failed";
+    }
+
+    file.flush();   //清空文件的缓冲区
+    file.close();   //关闭文件
 }
 
 bool CPServer::getRegResult(QString name, QString pswd)
