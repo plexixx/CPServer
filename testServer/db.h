@@ -11,6 +11,7 @@
 #include <report.h>
 #include <bill.h>
 #include <user.h>
+#include <QDebug>
 
 static qlonglong ID = 1;
 

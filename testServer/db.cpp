@@ -10,6 +10,8 @@ DB::DB()
             "Unable to establish a sisDB connection.", QMessageBox::Cancel);
     }
 
+    query = QSqlQuery(database);
+
     //SysTimer CreateTime/BeginPowerTime/EndPowerTime需要变成string类型存储
     query.exec("create table if not exists bill(id int key, CreateTime String, ChargeId int,"
                "ChargeCabacity float, ChargeTime int, BeginPowerTime String, EndPowerTime String,"
@@ -19,6 +21,7 @@ DB::DB()
                "TotalChargeTime int, TotalChargeCabacity float, TotalChargeFare float, "
                "TotalServeFare float, TotalFare float)");
     query.exec("alter table report add constraint pk_name primary key (day,mon, CPid)");
+    //qDebug() << "************************************!!!!!!!!!" << endl;
 }
 
 void DB::storeUser(User *user)

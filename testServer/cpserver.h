@@ -73,7 +73,9 @@ public:
     QByteArray getAllSheet(QString); // 获取全部详单及其主要信息
     int getQueueNum(QString); // 获取排队号
     int getPreCarNum(QString); // 获取前车等待数
-    bool CusChangAsk();
+    bool CusChangeAsk();
+
+    bool isEmpty(bool mode); // 检查同类型充电桩是否有车辆正在排队
 
     Ui::MainWindow *ui;
     QTcpSocket* tcp_socket;  // 服务器检测到连接后创建的用于和客服端通信的socket
